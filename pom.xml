@@ -16,9 +16,9 @@
     and configuration.
   </description>
   <scm>
-    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/microcontainer/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/microcontainer/trunk/</developerConnection>
-    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/microcontainer/trunk/</url>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/microcontainer/branches/Branch_2_0/</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/microcontainer/branches/Branch_2_0/</developerConnection>
+    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/microcontainer/branches/Branch_2_0/</url>
   </scm>
 
   <modules>

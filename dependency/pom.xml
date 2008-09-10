@@ -11,9 +11,9 @@
   <url>http://www.jboss.com/products/jbossmc</url>
   <description>JBoss Microcontainer Dependency</description>
   <scm>
-    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/microcontainer/trunk/dependency</connection>
-    <developerConnection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/microcontainer/trunk/dependency</developerConnection>
-    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/microcontainer/trunk/dependency</url>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/microcontainer/branches/Branch_2_0/dependency</connection>
+    <developerConnection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/microcontainer/branches/Branch_2_0/dependency</developerConnection>
+    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/microcontainer/branches/Branch_2_0/dependency</url>
   </scm>
   <build>
     <plugins>
