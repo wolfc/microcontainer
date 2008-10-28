@@ -41,6 +41,7 @@ import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
 import org.jboss.beans.metadata.spi.CallbackMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
+import org.jboss.beans.metadata.spi.LifecycleMetaData;
 import org.jboss.beans.metadata.spi.RelatedClassMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.dependency.spi.Cardinality;
@@ -889,5 +890,25 @@ public class BeanMetaDataBuilderTestCase extends AbstractKernelConfigTest
       BeanMetaData bmd = builder.getBeanMetaData();
 
       assertEquals(related, bmd.getRelated());
+   }
+
+   public void testIgnoredLifecycle() throws Throwable
+   {
+      BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder("test");
+      builder.ignoreCreate();
+      builder.ignoreStart();
+      builder.ignoreStop();
+      builder.ignoreDestroy();
+      BeanMetaData bmd = builder.getBeanMetaData();
+      assertIgnoredLifecycle(bmd.getCreate());
+      assertIgnoredLifecycle(bmd.getStart());
+      assertIgnoredLifecycle(bmd.getStop());
+      assertIgnoredLifecycle(bmd.getDestroy());
+   }
+
+   protected void assertIgnoredLifecycle(LifecycleMetaData lmd)
+   {
+      assertNotNull(lmd);
+      assertTrue(lmd.isIgnored());
    }
 }
