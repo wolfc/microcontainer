@@ -42,7 +42,7 @@ import org.jboss.logging.Logger;
 
 /**
  * Bean factory metadata.
- * 
+ *
  * @author <a href="ales.justin@jboss.com">Ales Justin</a>
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision$
@@ -57,14 +57,14 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
 
    /**
     * Create a new generic bean factory
-    * 
+    *
     * @param configurator the configurator
     */
    public GenericBeanFactory(KernelConfigurator configurator)
    {
       super(configurator);
    }
-   
+
    /**
     * Create a new bean
     *
@@ -74,7 +74,7 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
    public Object createBean() throws Throwable
    {
       final ClassLoader cl = getControllerContextClassLoader();
-      
+
       AccessControlContext acc = getAccessControlContext();
 
       if (acc == null || System.getSecurityManager() == null)
@@ -82,7 +82,7 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
 
       try
       {
-         return AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() 
+         return AccessController.doPrivileged(new PrivilegedExceptionAction<Object>()
          {
             public Object run() throws Exception
             {
@@ -110,7 +110,7 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
          throw e.getCause();
       }
    }
-   
+
    public void setKernelControllerContext(KernelControllerContext context) throws Exception
    {
       this.context = context;
@@ -123,8 +123,9 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
 
    /**
     * Get the classloader from the controller context
-    * 
+    *
     * @return the controller context
+    * @throws Throwable for any error
     */
    private ClassLoader getControllerContextClassLoader() throws Throwable
    {
@@ -143,7 +144,7 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
             }
          }
 
-         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() 
+         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
          {
             public ClassLoader run()
             {
@@ -164,8 +165,9 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
 
    /**
     * Get the access control context from the controller context
-    * 
+    *
     * @return the access control
+    * @throws Throwable for any error
     */
    private AccessControlContext getAccessControlContext() throws Throwable
    {
@@ -173,12 +175,12 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
       {
          if (context instanceof AbstractKernelControllerContext == false)
             return null;
-         
+
          final AbstractKernelControllerContext akcc = (AbstractKernelControllerContext) context;
          if (System.getSecurityManager() == null)
             return akcc.getAccessControlContext();
 
-         return AccessController.doPrivileged(new PrivilegedAction<AccessControlContext>() 
+         return AccessController.doPrivileged(new PrivilegedAction<AccessControlContext>()
          {
             public AccessControlContext run()
             {
@@ -188,7 +190,7 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
       }
       return null;
    }
-   
+
    /**
     * Create a new bean
     *
@@ -198,12 +200,12 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
     */
    private Object createBean(ClassLoader cl) throws Throwable
    {
-      ClassLoader cl2 = cl;
-      if (cl2 == null)
-         cl2 = Configurator.getClassLoader(classLoader);
+      ClassLoader loader = cl;
+      if (loader == null)
+         loader = Configurator.getClassLoader(classLoader);
       BeanInfo info = null;
       if (bean != null)
-         info = configurator.getBeanInfo(bean, cl, accessMode);
+         info = configurator.getBeanInfo(bean, loader, accessMode);
 
       Joinpoint joinpoint = configurator.getConstructorJoinPoint(info, constructor, null);
       Object result = joinpoint.dispatch();
@@ -217,11 +219,11 @@ public class GenericBeanFactory extends AbstractBeanFactory implements KernelCon
             String property = entry.getKey();
             ValueMetaData vmd = entry.getValue();
             PropertyInfo pi = info.getProperty(property);
-            pi.set(result, vmd.getValue(pi.getType(), cl));
+            pi.set(result, vmd.getValue(pi.getType(), loader));
          }
       }
-      invokeLifecycle("create", create, info, cl, result);
-      invokeLifecycle("start", start, info, cl, result);
+      invokeLifecycle("create", create, info, loader, result);
+      invokeLifecycle("start", start, info, loader, result);
       return result;
    }
 }
