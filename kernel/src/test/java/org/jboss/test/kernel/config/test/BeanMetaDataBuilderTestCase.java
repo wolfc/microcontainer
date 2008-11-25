@@ -25,24 +25,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
 import junit.framework.Test;
 import org.jboss.beans.metadata.api.model.AutowireType;
-import org.jboss.beans.metadata.plugins.InstallCallbackMetaData;
-import org.jboss.beans.metadata.plugins.UninstallCallbackMetaData;
 import org.jboss.beans.metadata.plugins.AbstractBeanMetaData;
 import org.jboss.beans.metadata.plugins.AbstractRelatedClassMetaData;
+import org.jboss.beans.metadata.plugins.InstallCallbackMetaData;
+import org.jboss.beans.metadata.plugins.UninstallCallbackMetaData;
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
 import org.jboss.beans.metadata.spi.CallbackMetaData;
+import org.jboss.beans.metadata.spi.RelatedClassMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.LifecycleMetaData;
-import org.jboss.beans.metadata.spi.RelatedClassMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.dependency.spi.Cardinality;
 import org.jboss.dependency.spi.ControllerContext;
@@ -161,14 +161,14 @@ public class BeanMetaDataBuilderTestCase extends AbstractKernelConfigTest
    {
       BeanMetaDataBuilder demand = BeanMetaDataBuilderFactory.createBuilder("DemandBean", SimpleBean.class.getName());
       demand.addDemand("Barrier");
-      BeanMetaData demandBean = demand.getBeanMetaData();
+      BeanMetaDataFactory demandBean = demand.getBeanMetaDataFactory();
 
       BeanMetaDataBuilder supply = BeanMetaDataBuilderFactory.createBuilder("SupplyBean", SimpleLifecycleBean.class.getName());
       supply.addSupply("Barrier");
-      BeanMetaData supplyBean = supply.getBeanMetaData();
+      BeanMetaDataFactory supplyBean = supply.getBeanMetaDataFactory();
 
       AbstractKernelDeployment deployment = new AbstractKernelDeployment();
-      deployment.setBeans(Arrays.asList(demandBean, supplyBean));
+      deployment.setBeanFactories(Arrays.asList(demandBean, supplyBean));
 
       Kernel kernel = bootstrap();
       KernelController controller = kernel.getController();
@@ -193,13 +193,13 @@ public class BeanMetaDataBuilderTestCase extends AbstractKernelConfigTest
    {
       BeanMetaDataBuilder dependOn = BeanMetaDataBuilderFactory.createBuilder("DependOnBean", SimpleBean.class.getName());
       dependOn.addDependency("DependencyResolver");
-      BeanMetaData dependOnBean = dependOn.getBeanMetaData();
+      BeanMetaDataFactory dependOnBean = dependOn.getBeanMetaDataFactory();
 
       BeanMetaDataBuilder resolver = BeanMetaDataBuilderFactory.createBuilder("DependencyResolver", SimpleLifecycleBean.class.getName());
-      BeanMetaData resolverBean = resolver.getBeanMetaData();
+      BeanMetaDataFactory resolverBean = resolver.getBeanMetaDataFactory();
 
       AbstractKernelDeployment deployment = new AbstractKernelDeployment();
-      deployment.setBeans(Arrays.asList(dependOnBean, resolverBean));
+      deployment.setBeanFactories(Arrays.asList(dependOnBean, resolverBean));
 
       Kernel kernel = bootstrap();
       KernelController controller = kernel.getController();
@@ -250,7 +250,7 @@ public class BeanMetaDataBuilderTestCase extends AbstractKernelConfigTest
       builder.addPropertyMetaData("map", map);
 
       AbstractKernelDeployment deployment = new AbstractKernelDeployment();
-      deployment.setBeans(Arrays.asList(builder.getBeanMetaData()));
+      deployment.setBeanFactories(Arrays.asList(builder.getBeanMetaDataFactory()));
 
       Kernel kernel = bootstrap();
       KernelController controller = kernel.getController();
@@ -328,7 +328,7 @@ public class BeanMetaDataBuilderTestCase extends AbstractKernelConfigTest
       builder.addPropertyMetaData("map", map);
 
       AbstractKernelDeployment deployment = new AbstractKernelDeployment();
-      deployment.setBeans(Arrays.asList(builder.getBeanMetaData()));
+      deployment.setBeanFactories(Arrays.asList(builder.getBeanMetaDataFactory()));
 
       Kernel kernel = bootstrap();
       KernelController controller = kernel.getController();
@@ -903,7 +903,7 @@ public class BeanMetaDataBuilderTestCase extends AbstractKernelConfigTest
       assertIgnoredLifecycle(bmd.getCreate());
       assertIgnoredLifecycle(bmd.getStart());
       assertIgnoredLifecycle(bmd.getStop());
-      assertIgnoredLifecycle(bmd.getDestroy());
+      assertIgnoredLifecycle(bmd.getDestroy());       
    }
 
    protected void assertIgnoredLifecycle(LifecycleMetaData lmd)

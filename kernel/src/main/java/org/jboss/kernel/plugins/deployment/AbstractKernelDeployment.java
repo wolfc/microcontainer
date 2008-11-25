@@ -135,6 +135,7 @@ public class AbstractKernelDeployment extends JBossObject
     * @param beans a List<BeanMetaData>.
     */
    @SuppressWarnings("unchecked")
+   @Deprecated
    public void setBeans(List beans)
    {
       this.beanFactories = beans;
