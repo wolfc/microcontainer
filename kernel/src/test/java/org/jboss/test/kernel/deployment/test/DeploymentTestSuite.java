@@ -27,7 +27,7 @@ import junit.textui.TestRunner;
 
 /**
  * Deployment Test Suite.
- * 
+ *
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision$
  */
@@ -70,6 +70,7 @@ public class DeploymentTestSuite extends TestSuite
       suite.addTest(MockServiceBindingTestCase.suite());
       suite.addTest(AnnotationUsageTestCase.suite());
       suite.addTest(PropertyUsageTestCase.suite());
+      suite.addTest(NullifyTestCase.suite());
       // bean container tests
       suite.addTest(BeanContainerUsageTestCase.suite());
       suite.addTest(BeanContainerUsageMDTestCase.suite());
