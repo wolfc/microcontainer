@@ -25,6 +25,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
@@ -56,14 +59,6 @@ public class OverriddenClassLoaderTestCase extends AOPMicrocontainerTest
       return suite(OverriddenClassLoaderTestCase.class);
    }
 
-//   public static AbstractTestDelegate getDelegate(Class<?> clazz) throws Exception
-//   {
-//      //Don't use security for this test
-//      AbstractTypeTestDelegate delegate = new AbstractTypeTestDelegate(clazz);
-//      return delegate;
-//   }
-
-   
    public void testOverriddenLoader() throws Exception
    {
       ClassLoader loader = createParentLastURLClassLoader();
@@ -111,7 +106,7 @@ public class OverriddenClassLoaderTestCase extends AOPMicrocontainerTest
       File classFile = new File(url.toURI());
 
       //    File jarFile = new File("test-overridden-classloader.jar");
-      File jarFile = File.createTempFile("test-overridden-classloader", "jar");
+      File jarFile = createTempFile("test-overridden-classloader", "jar");
       jarFile.deleteOnExit();
       
       if (jarFile.exists())
@@ -150,5 +145,28 @@ public class OverriddenClassLoaderTestCase extends AOPMicrocontainerTest
       }
       getLog().debug("===> Created jar " + jarFile.getAbsolutePath());
       return jarFile;
+   }
+   
+   private File createTempFile(final String prefix, final String suffix) throws Exception
+   {
+      if (System.getSecurityManager() == null)
+         return File.createTempFile("test-overridden-classloader", "jar"); 
+      else
+      {
+         try
+         {
+            return AccessController.doPrivileged(new PrivilegedExceptionAction<File>()
+            {
+               public File run() throws Exception
+               {
+                  return File.createTempFile("test-overridden-classloader", "jar");
+               }
+            });
+         }
+         catch (PrivilegedActionException e)
+         {
+            throw e.getException();
+         }
+      }
    }
 }
