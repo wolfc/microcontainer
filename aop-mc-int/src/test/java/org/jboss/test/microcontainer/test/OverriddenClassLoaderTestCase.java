@@ -1,0 +1,154 @@
+/*
+* JBoss, Home of Professional Open Source
+* Copyright 2006, JBoss Inc., and individual contributors as indicated
+* by the @authors tag. See the copyright.txt in the distribution for a
+* full listing of individual contributors.
+*
+* This is free software; you can redistribute it and/or modify it
+* under the terms of the GNU Lesser General Public License as
+* published by the Free Software Foundation; either version 2.1 of
+* the License, or (at your option) any later version.
+*
+* This software is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this software; if not, write to the Free
+* Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+* 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+*/
+package org.jboss.test.microcontainer.test;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+
+import junit.framework.Test;
+
+import org.jboss.aop.advice.AspectDefinition;
+import org.jboss.aop.advice.AspectFactory;
+import org.jboss.aop.advice.AspectFactoryWithClassLoader;
+import org.jboss.aop.microcontainer.beans.Aspect;
+import org.jboss.test.aop.junit.AOPMicrocontainerTest;
+import org.jboss.test.microcontainer.support.ParentLastURLClassLoader;
+import org.jboss.test.microcontainer.support.TestAspect;
+
+/**
+ * Checks that an aspect can have its classloader overridden
+ *
+ * @author <a href="mailto:kabir.khan@jboss.com">Kabir Khan</a>
+ */
+public class OverriddenClassLoaderTestCase extends AOPMicrocontainerTest
+{
+   public OverriddenClassLoaderTestCase(String name)
+   {
+      super(name);
+   }
+
+   public static Test suite()
+   {
+      return suite(OverriddenClassLoaderTestCase.class);
+   }
+
+//   public static AbstractTestDelegate getDelegate(Class<?> clazz) throws Exception
+//   {
+//      //Don't use security for this test
+//      AbstractTypeTestDelegate delegate = new AbstractTypeTestDelegate(clazz);
+//      return delegate;
+//   }
+
+   
+   public void testOverriddenLoader() throws Exception
+   {
+      ClassLoader loader = createParentLastURLClassLoader();
+      
+      Class<?> clazz = loader.loadClass(TestAspect.class.getName());
+      assertNotSame(TestAspect.class, clazz);
+      assertSame(loader, clazz.getClassLoader());
+      
+      Aspect aspect = (Aspect)getBean("Aspect");
+      assertNotNull(aspect);
+      
+      AspectDefinition def = aspect.getDefinition();
+      AspectFactory factory = def.getFactory();
+      
+      Object global = factory.createPerVM();
+      assertSame(this.getClass().getClassLoader(), global.getClass().getClassLoader());
+      
+      assertInstanceOf(factory, AspectFactoryWithClassLoader.class);
+      AspectFactoryWithClassLoader factoryCl = (AspectFactoryWithClassLoader)factory;
+      
+      factoryCl.pushScopedClassLoader(loader);
+      try
+      {
+         Object scoped = factory.createPerVM();
+         assertSame(loader, scoped.getClass().getClassLoader());
+      }
+      finally
+      {
+         factoryCl.popScopedClassLoader();
+      }
+   }
+   
+   private ClassLoader createParentLastURLClassLoader() throws Exception
+   {
+      File jarFile = createJar();
+      
+      URL jarUrl = jarFile.toURL();
+      return new ParentLastURLClassLoader(new URL[] {jarUrl}, this.getClass().getClassLoader());
+   }
+   
+   private File createJar() throws Exception
+   {
+      String resource = TestAspect.class.getName().replace('.', '/') + ".class";
+      URL url = this.getClass().getClassLoader().getResource(resource);
+      File classFile = new File(url.toURI());
+
+      //    File jarFile = new File("test-overridden-classloader.jar");
+      File jarFile = File.createTempFile("test-overridden-classloader", "jar");
+      jarFile.deleteOnExit();
+      
+      if (jarFile.exists())
+      {
+         jarFile.delete();
+      }
+      JarOutputStream out = null;
+      try
+      {
+         out = new JarOutputStream(new FileOutputStream(jarFile), new Manifest());
+         JarEntry entry = new JarEntry(resource);
+         out.putNextEntry(entry);
+         FileInputStream in = null;
+         try
+         {
+            in = new FileInputStream(classFile);
+            byte[] buf = new byte[200000];
+            while(true)
+            {
+               int i = in.read(buf, 0, buf.length);
+               if (i <=0)
+               {
+                  break;
+               }
+               out.write(buf, 0, i);
+            }
+         }
+         finally
+         {
+            in.close();
+         }
+      }
+      finally
+      {
+         out.close();
+      }
+      getLog().debug("===> Created jar " + jarFile.getAbsolutePath());
+      return jarFile;
+   }
+}
