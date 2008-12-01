@@ -67,23 +67,20 @@ public class OverriddenClassLoaderTestCase extends AOPMicrocontainerTest
       assertNotSame(TestAspect.class, clazz);
       assertSame(loader, clazz.getClassLoader());
       
-      Aspect aspect = (Aspect)getBean("Aspect");
-      assertNotNull(aspect);
-      
+      Aspect aspect = assertInstanceOf(getBean("Aspect"), Aspect.class, false);     
       AspectDefinition def = aspect.getDefinition();
       AspectFactory factory = def.getFactory();
       
       Object global = factory.createPerVM();
-      assertSame(this.getClass().getClassLoader(), global.getClass().getClassLoader());
-      
-      assertInstanceOf(factory, AspectFactoryWithClassLoader.class);
-      AspectFactoryWithClassLoader factoryCl = (AspectFactoryWithClassLoader)factory;
-      
+      assertSame(getClass().getClassLoader(), global.getClass().getClassLoader());
+
+      AspectFactoryWithClassLoader factoryCl = assertInstanceOf(factory, AspectFactoryWithClassLoader.class);
       factoryCl.pushScopedClassLoader(loader);
       try
       {
          Object scoped = factory.createPerVM();
-         assertSame(loader, scoped.getClass().getClassLoader());
+         ClassLoader scopedLoader = scoped.getClass().getClassLoader();
+         assertSame(loader, scopedLoader);
       }
       finally
       {
@@ -96,13 +93,14 @@ public class OverriddenClassLoaderTestCase extends AOPMicrocontainerTest
       File jarFile = createJar();
       
       URL jarUrl = jarFile.toURL();
-      return new ParentLastURLClassLoader(new URL[] {jarUrl}, this.getClass().getClassLoader());
+      return new ParentLastURLClassLoader(new URL[] {jarUrl}, getClass().getClassLoader());
    }
    
    private File createJar() throws Exception
    {
       String resource = TestAspect.class.getName().replace('.', '/') + ".class";
-      URL url = this.getClass().getClassLoader().getResource(resource);
+      URL url = getClass().getClassLoader().getResource(resource);
+      assertNotNull(resource + " not found.", url);
       File classFile = new File(url.toURI());
 
       //    File jarFile = new File("test-overridden-classloader.jar");
@@ -111,7 +109,7 @@ public class OverriddenClassLoaderTestCase extends AOPMicrocontainerTest
       
       if (jarFile.exists())
       {
-         jarFile.delete();
+         assertTrue(jarFile.delete());
       }
       JarOutputStream out = null;
       try
@@ -150,7 +148,7 @@ public class OverriddenClassLoaderTestCase extends AOPMicrocontainerTest
    private File createTempFile(final String prefix, final String suffix) throws Exception
    {
       if (System.getSecurityManager() == null)
-         return File.createTempFile("test-overridden-classloader", "jar"); 
+         return File.createTempFile(prefix, suffix);
       else
       {
          try
@@ -159,7 +157,7 @@ public class OverriddenClassLoaderTestCase extends AOPMicrocontainerTest
             {
                public File run() throws Exception
                {
-                  return File.createTempFile("test-overridden-classloader", "jar");
+                  return File.createTempFile(prefix, suffix);
                }
             });
          }

@@ -25,7 +25,8 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 /**
- * 
+ * CL security actions.
+ *
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
@@ -67,6 +68,45 @@ class SecurityActions
       else
       {
          return GetContextClassLoaderAction.PRIVILEGED.getContextClassLoader();
+      }
+   }
+
+   private interface GetClassLoaderAction
+   {
+      ClassLoader getClassLoader(Class<?> clazz);
+      
+      GetClassLoaderAction PRIVILEGED = new GetClassLoaderAction(){
+      
+            public ClassLoader getClassLoader(final Class<?> clazz)
+            {
+               return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+               {
+                  public ClassLoader run()
+                  {
+                     return clazz.getClassLoader();
+                  }
+               });
+            }
+      };
+
+      GetClassLoaderAction NOT_PRIVILEGED = new GetClassLoaderAction(){
+         
+         public ClassLoader getClassLoader(Class<?> clazz)
+         {
+            return clazz.getClassLoader();
+         }
+      };
+   }
+   
+   public static ClassLoader getClassLoader(Class<?> clazz)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return GetClassLoaderAction.NOT_PRIVILEGED.getClassLoader(clazz);
+      }
+      else
+      {
+         return GetClassLoaderAction.PRIVILEGED.getClassLoader(clazz);
       }
    }
 }
