@@ -25,12 +25,8 @@ import org.jboss.aop.Advisor;
 import org.jboss.aop.InstanceAdvisor;
 import org.jboss.aop.advice.GenericAspectFactory;
 import org.jboss.aop.joinpoint.Joinpoint;
-import org.jboss.beans.metadata.plugins.AbstractClassLoaderMetaData;
-import org.jboss.beans.metadata.plugins.AbstractValueMetaData;
 import org.jboss.beans.metadata.plugins.factory.GenericBeanFactory;
-import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.factory.BeanFactory;
-import org.jboss.kernel.plugins.config.Configurator;
 import org.jboss.kernel.spi.dependency.KernelControllerContext;
 import org.jboss.kernel.spi.dependency.KernelControllerContextAware;
 import org.jboss.logging.Logger;
@@ -43,7 +39,7 @@ import org.w3c.dom.Element;
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision$
  */
-public class GenericBeanAspectFactory extends GenericAspectFactory implements KernelControllerContextAware
+public class GenericBeanAspectFactory extends GenericAspectFactory implements KernelControllerContextAware, BeanFactoryAwareAspectFactory
 {
    private static final Logger log = Logger.getLogger(GenericBeanAspectFactory.class); 
 
