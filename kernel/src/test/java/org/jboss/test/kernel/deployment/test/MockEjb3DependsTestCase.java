@@ -1,8 +1,8 @@
 /*
-* JBoss, Home of Professional Open Source.
-* Copyright 2006, Red Hat Middleware LLC, and individual contributors
-* as indicated by the @author tags. See the copyright.txt file in the
-* distribution for a full listing of individual contributors. 
+* JBoss, Home of Professional Open Source
+* Copyright 2006, JBoss Inc., and individual contributors as indicated
+* by the @authors tag. See the copyright.txt in the distribution for a
+* full listing of individual contributors.
 *
 * This is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as
@@ -18,29 +18,31 @@
 * License along with this software; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/ 
-package org.jboss.test.microcontainer.beans;
+*/
+package org.jboss.test.kernel.deployment.test;
+
+import junit.framework.Test;
+import org.jboss.test.kernel.deployment.support.SimpleBean;
 
 /**
- * 
- * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
- * @version $Revision: 1.1 $
+ * MockEjb3DependsTestCase: JBMICROCONT-365
+ *
+ * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
-public class POJO
-   implements iPOJO
+public class MockEjb3DependsTestCase extends AbstractDeploymentTest
 {
-   public int method(int i)
+   public MockEjb3DependsTestCase(String name) throws Throwable
    {
-      return i * 2;
+      super(name);
    }
-   
-   public void method()
+
+   public static Test suite()
    {
-      
+      return suite(MockEjb3DependsTestCase.class);
    }
-   
-   public void defaultMethod()
+
+   public void testDepends() throws Throwable
    {
-      
+      assertBean("EJB", SimpleBean.class);
    }
 }

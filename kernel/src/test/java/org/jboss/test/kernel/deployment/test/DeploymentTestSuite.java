@@ -27,7 +27,7 @@ import junit.textui.TestRunner;
 
 /**
  * Deployment Test Suite.
- *
+ * 
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision$
  */
@@ -68,9 +68,13 @@ public class DeploymentTestSuite extends TestSuite
       suite.addTest(MutableMetaDataTestCase.suite());
       suite.addTest(AnnotationRedeployTestCase.suite());
       suite.addTest(MockServiceBindingTestCase.suite());
+      suite.addTest(MockEjb3DependsTestCase.suite());
       suite.addTest(AnnotationUsageTestCase.suite());
       suite.addTest(PropertyUsageTestCase.suite());
+      suite.addTest(AliasInjectTestCase.suite());
+      suite.addTest(GetInstanceTestCase.suite());
       suite.addTest(NullifyTestCase.suite());
+      suite.addTest(TransitiveBeansTestCase.suite());
       // bean container tests
       suite.addTest(BeanContainerUsageTestCase.suite());
       suite.addTest(BeanContainerUsageMDTestCase.suite());
@@ -83,6 +87,9 @@ public class DeploymentTestSuite extends TestSuite
       suite.addTest(ScopingAliasAPITestCase.suite());
       suite.addTest(ScopingOverrideTestCase.suite());
       suite.addTest(ScopingDependencyTestCase.suite());
+      // super-demand
+      suite.addTest(SuperDemandAnnotationTestCase.suite());
+      suite.addTest(SuperDemandInstallTestCase.suite());
 
       return suite;
    }

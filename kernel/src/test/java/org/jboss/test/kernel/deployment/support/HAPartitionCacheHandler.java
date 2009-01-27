@@ -1,8 +1,8 @@
 /*
-* JBoss, Home of Professional Open Source.
-* Copyright 2006, Red Hat Middleware LLC, and individual contributors
-* as indicated by the @author tags. See the copyright.txt file in the
-* distribution for a full listing of individual contributors. 
+* JBoss, Home of Professional Open Source
+* Copyright 2006, JBoss Inc., and individual contributors as indicated
+* by the @authors tag. See the copyright.txt in the distribution for a
+* full listing of individual contributors.
 *
 * This is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as
@@ -18,29 +18,26 @@
 * License along with this software; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/ 
-package org.jboss.test.microcontainer.beans;
+*/
+package org.jboss.test.kernel.deployment.support;
 
 /**
- * 
- * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
- * @version $Revision: 1.1 $
+ * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
-public class POJO
-   implements iPOJO
+public class HAPartitionCacheHandler
 {
-   public int method(int i)
+   private HAPartition partition;
+
+   public void setPartition(HAPartition partition)
    {
-      return i * 2;
+      this.partition = partition;
    }
-   
-   public void method()
+
+   public String getCache()
    {
-      
-   }
-   
-   public void defaultMethod()
-   {
-      
+      if (partition == null  || partition.isStarted() == false)
+         throw new IllegalArgumentException("HAPartition not started!");
+
+      return "some-cache";
    }
 }

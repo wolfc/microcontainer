@@ -1,8 +1,8 @@
 /*
-* JBoss, Home of Professional Open Source.
-* Copyright 2006, Red Hat Middleware LLC, and individual contributors
-* as indicated by the @author tags. See the copyright.txt file in the
-* distribution for a full listing of individual contributors. 
+* JBoss, Home of Professional Open Source
+* Copyright 2006, JBoss Inc., and individual contributors as indicated
+* by the @authors tag. See the copyright.txt in the distribution for a
+* full listing of individual contributors.
 *
 * This is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as
@@ -18,29 +18,22 @@
 * License along with this software; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/ 
-package org.jboss.test.microcontainer.beans;
+*/
+package org.jboss.test.kernel.deployment.support;
 
 /**
- * 
- * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
- * @version $Revision: 1.1 $
+ * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
-public class POJO
-   implements iPOJO
+public class GetInstanceBean
 {
-   public int method(int i)
+   private static final GetInstanceBean instance = new GetInstanceBean("X");
+
+   private GetInstanceBean(String x)
    {
-      return i * 2;
    }
-   
-   public void method()
+
+   public static GetInstanceBean getInstance()
    {
-      
-   }
-   
-   public void defaultMethod()
-   {
-      
+      return instance;
    }
 }
