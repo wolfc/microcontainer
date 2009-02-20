@@ -21,29 +21,34 @@
 */
 package org.jboss.beans.metadata.plugins;
 
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jboss.beans.metadata.spi.MetaDataVisitor;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.dependency.plugins.AbstractDependencyItem;
+import org.jboss.dependency.plugins.graph.Search;
+import org.jboss.dependency.plugins.graph.SearchDependencyItem;
 import org.jboss.dependency.spi.Controller;
 import org.jboss.dependency.spi.ControllerContext;
 import org.jboss.dependency.spi.ControllerState;
 import org.jboss.dependency.spi.DependencyItem;
 import org.jboss.dependency.spi.dispatch.AttributeDispatchContext;
+import org.jboss.dependency.spi.graph.LookupStrategy;
+import org.jboss.dependency.spi.graph.SearchInfo;
 import org.jboss.kernel.spi.dependency.KernelControllerContext;
+import org.jboss.managed.api.annotation.ManagementProperty;
 import org.jboss.reflect.spi.TypeInfo;
 import org.jboss.util.JBossStringBuilder;
 import org.jboss.xb.annotations.JBossXmlAttribute;
-import org.jboss.managed.api.annotation.ManagementProperty;
 
 /**
  * Dependency value.
  *
- * @author <a href="ales.justin@jboss.com">Ales Justin</a>
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
+ * @author <a href="ales.justin@jboss.com">Ales Justin</a>
+ * @author Radim Marek (obrien)
  * @version $Revision$
  */
 @XmlType(name="injectionType")
@@ -75,6 +80,12 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
     * The required state of the dependency or null to look in the registry
     */
    protected ControllerState dependentState;
+
+   /**
+    * The search type
+    */
+   protected SearchInfo search = Search.DEFAULT;
+
 
    /**
     * Create a new dependency value
@@ -138,6 +149,11 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
       flushJBossObjectCache();
    }
 
+   /**
+    * Get when required state.
+    *
+    * @return the when required state
+    */
    public ControllerState getWhenRequiredState()
    {
       return whenRequiredState;
@@ -155,6 +171,11 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
       flushJBossObjectCache();
    }
 
+   /**
+    * Get the required state of dependency.
+    *
+    * @return the required dependency state
+    */
    public ControllerState getDependentState()
    {
       return dependentState;
@@ -179,6 +200,37 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
          setValue(new AbstractValueMetaData(value));
    }
 
+   /**
+    * Set search type.
+    *
+    * @param search the search type
+    */
+   @XmlAttribute(name = "search")
+   public void setSearch(SearchInfo search)
+   {
+      this.search = search;
+   }
+
+   /**
+    * Get search type.
+    *
+    * @return the search type
+    */
+   public SearchInfo getSearch()
+   {
+      return search;
+   }
+
+   /**
+    * Is search applied.
+    *
+    * @return true if search is applied
+    */
+   protected boolean isSearchApplied()
+   {
+      return (search != Search.DEFAULT);
+   }
+
    protected boolean isLookupValid(ControllerContext lookup)
    {
       return (lookup != null);
@@ -189,11 +241,31 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
       return false;
    }
 
+   /**
+    * Add optional dependency.
+    *
+    * @param controller the controller
+    * @param lookup the lookup context
+    */
    protected void addOptionalDependency(Controller controller, ControllerContext lookup)
    {
       OptionalDependencyItem dependency = new OptionalDependencyItem(context.getName(), lookup.getName(), lookup.getState());
       context.getDependencyInfo().addIDependOn(dependency);
       lookup.getDependencyInfo().addDependsOnMe(dependency);
+   }
+
+   /**
+    * Get controller context.
+    *
+    * @param name the name
+    * @param state the state
+    * @return the controller context
+    */
+   protected ControllerContext getControllerContext(Object name, ControllerState state)
+   {
+      Controller controller = context.getController();
+      LookupStrategy strategy = search.getStrategy();
+      return strategy.getContext(controller, name, state);
    }
 
    public Object getValue(TypeInfo info, ClassLoader cl) throws Throwable
@@ -203,16 +275,21 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
          state = ControllerState.INSTALLED;
       if (context == null)
          throw new IllegalStateException("No context for " + this);
-      Controller controller = context.getController();
-      ControllerContext lookup = controller.getContext(getUnderlyingValue(), state);
+
+      ControllerContext lookup = getControllerContext(getUnderlyingValue(), state);
 
       if (isLookupValid(lookup) == false)
          throw new Error("Should not be here - dependency failed - " + this);
 
       if (lookup == null)
+      {
          return null;
+      }
       else if (isOptional())
+      {
+         Controller controller = context.getController();
          addOptionalDependency(controller, lookup);
+      }
 
       Object result;
       if (property != null && property.length() > 0)
@@ -242,6 +319,9 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
 
    public void initialVisit(MetaDataVisitor visitor)
    {
+      if (search == null)
+         throw new IllegalArgumentException("Null search");
+
       context = visitor.getControllerContext();
 
       ControllerState whenRequired = whenRequiredState;
@@ -259,7 +339,15 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
          Object name = context.getName();
          Object iDependOn = getUnderlyingValue();
 
-         DependencyItem item = new AbstractDependencyItem(name, iDependOn, whenRequired, dependentState);
+         DependencyItem item;
+         if (isSearchApplied())
+         {
+            item = new SearchDependencyItem(name, iDependOn, whenRequired, dependentState, search);
+         }
+         else
+         {
+            item = new AbstractDependencyItem(name, iDependOn, whenRequired, dependentState);
+         }
          visitor.addDependency(item);
       }
       super.initialVisit(visitor);
@@ -274,6 +362,8 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
          buffer.append(" whenRequiredState=").append(whenRequiredState.getStateString());
       if (dependentState != null)
          buffer.append(" dependentState=").append(dependentState.getStateString());
+      if (isSearchApplied())
+         buffer.append(" search=").append(search);
    }
 
    public AbstractDependencyValueMetaData clone()
@@ -284,11 +374,11 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
    /**
     * Optional depedency item.
     */
-   protected class OptionalDependencyItem extends AbstractDependencyItem
+   protected class OptionalDependencyItem extends SearchDependencyItem
    {
       public OptionalDependencyItem(Object name, Object iDependOn, ControllerState dependentState)
       {
-         super(name, iDependOn, optionalWhenRequired, dependentState);
+         super(name, iDependOn, optionalWhenRequired, dependentState, search);
          setResolved(true);
       }
    }

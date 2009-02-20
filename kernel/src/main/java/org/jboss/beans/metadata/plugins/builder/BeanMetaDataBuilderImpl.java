@@ -43,6 +43,8 @@ import org.jboss.beans.metadata.plugins.AbstractConstructorMetaData;
 import org.jboss.beans.metadata.plugins.AbstractDemandMetaData;
 import org.jboss.beans.metadata.plugins.AbstractDependencyMetaData;
 import org.jboss.beans.metadata.plugins.AbstractDependencyValueMetaData;
+import org.jboss.beans.metadata.plugins.AbstractFeatureMetaData;
+import org.jboss.beans.metadata.plugins.AbstractInjectionValueMetaData;
 import org.jboss.beans.metadata.plugins.AbstractInstallMetaData;
 import org.jboss.beans.metadata.plugins.AbstractListMetaData;
 import org.jboss.beans.metadata.plugins.AbstractMapMetaData;
@@ -54,7 +56,6 @@ import org.jboss.beans.metadata.plugins.AbstractValueMetaData;
 import org.jboss.beans.metadata.plugins.DirectAnnotationMetaData;
 import org.jboss.beans.metadata.plugins.StringValueMetaData;
 import org.jboss.beans.metadata.plugins.ThisValueMetaData;
-import org.jboss.beans.metadata.plugins.AbstractInjectionValueMetaData;
 import org.jboss.beans.metadata.spi.AnnotationMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
@@ -71,6 +72,7 @@ import org.jboss.dependency.spi.Cardinality;
 import org.jboss.dependency.spi.ControllerMode;
 import org.jboss.dependency.spi.ControllerState;
 import org.jboss.dependency.spi.ErrorHandlingMode;
+import org.jboss.dependency.spi.graph.SearchInfo;
 
 /**
  * Helper class.
@@ -649,6 +651,48 @@ class BeanMetaDataBuilderImpl extends BeanMetaDataBuilder
       return this;
    }
 
+   public BeanMetaDataBuilder addPropertyAnnotation(String name, String annotation)
+   {
+      AnnotationMetaData amd = createAnnotationMetaData(annotation);
+      return addPropertyAnnotation(name, amd);
+   }
+
+   public BeanMetaDataBuilder addPropertyAnnotation(String name, String annotation, boolean replace)
+   {
+      AnnotationMetaData amd = createAnnotationMetaData(annotation, replace);
+      return addPropertyAnnotation(name, amd);
+   }
+
+   public BeanMetaDataBuilder addPropertyAnnotation(String name, Annotation annotation)
+   {
+      AnnotationMetaData amd = createAnnotationMetaData(annotation);
+      return addPropertyAnnotation(name, amd);
+   }
+
+   /**
+    * Add property annotation metadata.
+    *
+    * @param name the property name
+    * @param amd the annotation metadata
+    * @return this builder
+    */
+   protected BeanMetaDataBuilder addPropertyAnnotation(String name, AnnotationMetaData amd)
+   {
+      PropertyMetaData pmd = beanMetaData.getProperty(name);
+      Set<AnnotationMetaData> annotations = pmd.getAnnotations();
+      if (annotations == null)
+      {
+         if (pmd instanceof AbstractFeatureMetaData == false)
+            throw new IllegalArgumentException("PropertyMetaData is not AbstractFeatureMetaData instance: " + pmd);
+
+         annotations = new HashSet<AnnotationMetaData>();
+         AbstractFeatureMetaData afmd = AbstractFeatureMetaData.class.cast(pmd);
+         afmd.setAnnotations(annotations);
+      }
+      annotations.add(amd);
+      return this;
+   }
+
    /**
     * Remove previous matching property.
     *
@@ -837,20 +881,23 @@ class BeanMetaDataBuilderImpl extends BeanMetaDataBuilder
     *
     * @param demand the demand
     * @param whenRequired the when required
+    * @param targetState the target state
     * @param transformer the transformer
     * @return the demand metadata
     */
-   protected DemandMetaData createDemandMetaData(Object demand, ControllerState whenRequired, String transformer)
+   protected DemandMetaData createDemandMetaData(Object demand, ControllerState whenRequired, ControllerState targetState, String transformer)
    {
       AbstractDemandMetaData admd = new AbstractDemandMetaData(demand);
       if (whenRequired != null)
          admd.setWhenRequired(whenRequired);
+      if (targetState != null)
+         admd.setTargetState(targetState);
       if (transformer != null)
          admd.setTransformer(transformer);
       return admd;
    }
 
-   public BeanMetaDataBuilder addDemand(Object demand, ControllerState whenRequired, String transformer)
+   public BeanMetaDataBuilder addDemand(Object demand, ControllerState whenRequired, ControllerState targetState, String transformer)
    {
       Set<DemandMetaData> demands = beanMetaData.getDemands();
       if (demands == null)
@@ -858,7 +905,7 @@ class BeanMetaDataBuilderImpl extends BeanMetaDataBuilder
          demands = new HashSet<DemandMetaData>();
          beanMetaData.setDemands(demands);
       }
-      demands.add(createDemandMetaData(demand, whenRequired, transformer));
+      demands.add(createDemandMetaData(demand, whenRequired, targetState, transformer));
       return this;
    }
 
@@ -994,13 +1041,15 @@ class BeanMetaDataBuilderImpl extends BeanMetaDataBuilder
       return new AbstractDependencyValueMetaData(bean, property);
    }
 
-   public ValueMetaData createInject(Object bean, String property, ControllerState whenRequired, ControllerState dependentState)
+   public ValueMetaData createInject(Object bean, String property, ControllerState whenRequired, ControllerState dependentState, SearchInfo search)
    {
       AbstractDependencyValueMetaData result = createAbstractDependencyValueMetaData(bean, property);
       if (whenRequired != null)
          result.setWhenRequiredState(whenRequired);
       if (dependentState != null)
          result.setDependentState(dependentState);
+      if (search != null)
+         result.setSearch(search);
       return result;
    }
 
@@ -1014,7 +1063,7 @@ class BeanMetaDataBuilderImpl extends BeanMetaDataBuilder
       return new AbstractInjectionValueMetaData();
    }
 
-   public ValueMetaData createContextualInject(ControllerState whenRequired, ControllerState dependentState, AutowireType autowire, InjectOption option)
+   public ValueMetaData createContextualInject(ControllerState whenRequired, ControllerState dependentState, AutowireType autowire, InjectOption option, SearchInfo search)
    {
       AbstractInjectionValueMetaData result = createAbstractInjectionValueMetaData();
       if (whenRequired != null)
@@ -1025,6 +1074,8 @@ class BeanMetaDataBuilderImpl extends BeanMetaDataBuilder
          result.setInjectionType(autowire);
       if (option != null)
          result.setInjectionOption(option);
+      if (search != null)
+         result.setSearch(search);
       return result;
    }
 

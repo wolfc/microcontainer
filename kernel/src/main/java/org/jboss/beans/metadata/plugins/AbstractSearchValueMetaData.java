@@ -21,30 +21,33 @@
 */
 package org.jboss.beans.metadata.plugins;
 
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jboss.beans.metadata.spi.MetaDataVisitor;
 import org.jboss.beans.metadata.spi.ValueMetaData;
-import org.jboss.dependency.plugins.AbstractDependencyItem;
 import org.jboss.dependency.plugins.graph.Search;
+import org.jboss.dependency.plugins.graph.SearchDependencyItem;
 import org.jboss.dependency.spi.Controller;
 import org.jboss.dependency.spi.ControllerContext;
 import org.jboss.dependency.spi.ControllerState;
 import org.jboss.dependency.spi.DependencyItem;
 import org.jboss.dependency.spi.dispatch.AttributeDispatchContext;
 import org.jboss.dependency.spi.graph.GraphController;
+import org.jboss.dependency.spi.graph.SearchInfo;
+import org.jboss.managed.api.annotation.ManagementProperty;
 import org.jboss.reflect.spi.TypeInfo;
 import org.jboss.util.JBossStringBuilder;
 import org.jboss.xb.annotations.JBossXmlAttribute;
-import org.jboss.managed.api.annotation.ManagementProperty;
 
 /**
- * Search value metadata - TODO - still experimental
+ * Search value metadata.
  *
+ * @deprecated use <inject search="search-type"/> 
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
+@Deprecated
 @XmlType(name="searchType")
 public class AbstractSearchValueMetaData extends AbstractValueMetaData
 {
@@ -52,7 +55,7 @@ public class AbstractSearchValueMetaData extends AbstractValueMetaData
    private static final long serialVersionUID = 1L;
    
    private ControllerState state;
-   private org.jboss.dependency.plugins.graph.Search search;
+   private SearchInfo search;
    private String property;
 
    private ControllerContext context;
@@ -62,7 +65,7 @@ public class AbstractSearchValueMetaData extends AbstractValueMetaData
    {
    }
 
-   public AbstractSearchValueMetaData(Object value, ControllerState state, Search search, String property)
+   public AbstractSearchValueMetaData(Object value, ControllerState state, SearchInfo search, String property)
    {
       super(value);
       if (search == null)
@@ -122,7 +125,7 @@ public class AbstractSearchValueMetaData extends AbstractValueMetaData
       if (dependentState == null)
          dependentState = ControllerState.INSTALLED;
 
-      DependencyItem item = new SearchDependencyItem(name, iDependOn, whenRequired, dependentState);
+      DependencyItem item = new SearchDependencyItem(name, iDependOn, whenRequired, dependentState, search);
       visitor.addDependency(item);
 
       super.describeVisit(visitor);
@@ -175,40 +178,5 @@ public class AbstractSearchValueMetaData extends AbstractValueMetaData
    {
       super.toShortString(buffer);
       buffer.append("search=").append(search);
-   }
-
-   private class SearchDependencyItem extends AbstractDependencyItem
-   {
-      private SearchDependencyItem(Object name, Object iDependOn, ControllerState whenRequired, ControllerState dependentState)
-      {
-         super(name, iDependOn, whenRequired, dependentState);
-      }
-
-      public boolean resolve(Controller controller)
-      {
-         if (controller instanceof GraphController)
-         {
-            GraphController gc = (GraphController)controller;
-            ControllerContext context = gc.getContext(getIDependOn(), getDependentState(), search);
-            if (context != null)
-            {
-               setIDependOn(context.getName());
-               addDependsOnMe(controller, context);
-               setResolved(true);
-            }
-            else
-            {
-               setResolved(false);
-            }
-            return isResolved();
-         }
-         return false;
-      }
-
-      protected void toHumanReadableString(StringBuilder builder)
-      {
-         super.toHumanReadableString(builder);
-         builder.append("search=").append(search);
-      }
    }
 }

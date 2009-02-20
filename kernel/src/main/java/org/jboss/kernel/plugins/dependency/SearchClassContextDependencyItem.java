@@ -24,33 +24,25 @@ package org.jboss.kernel.plugins.dependency;
 import org.jboss.dependency.spi.Controller;
 import org.jboss.dependency.spi.ControllerContext;
 import org.jboss.dependency.spi.ControllerState;
+import org.jboss.dependency.spi.graph.LookupStrategy;
+import org.jboss.dependency.spi.graph.SearchInfo;
 
 /**
- * A Class context dependencyItem.
+ * A search Class context dependencyItem.
  *
  * @author <a href="ales.justin@gmail.com">Ales Justin</a>
  */
-public class ClassContextDependencyItem extends ClassDependencyItem
+public class SearchClassContextDependencyItem extends ClassDependencyItem
 {
-   public ClassContextDependencyItem(Object name, Class<?> demandClass, ControllerState whenRequired, ControllerState dependentState)
+   private SearchInfo search;
+
+   public SearchClassContextDependencyItem(Object name, Class<?> demandClass, ControllerState whenRequired, ControllerState dependentState, SearchInfo search)
    {
       super(name, demandClass, whenRequired, dependentState);
-   }
+      if (search == null)
+         throw new IllegalArgumentException("Null search.");
 
-   public boolean resolve(Controller controller)
-   {
-      ControllerContext context = getControllerContext(controller);
-      if (context != null)
-      {
-         setIDependOn(context.getName());
-         addDependsOnMe(controller, context);
-         setResolved(true);
-      }
-      else
-      {
-         setResolved(false);
-      }
-      return isResolved();
+      this.search = search;
    }
 
    /**
@@ -61,16 +53,7 @@ public class ClassContextDependencyItem extends ClassDependencyItem
     */
    protected ControllerContext getControllerContext(Controller controller)
    {
-      ControllerState state = getDependentState();
-      if (state == null)
-      {
-         return controller.getInstalledContext(getIDependOn());
-      }
-      else
-      {
-         return controller.getContext(getIDependOn(), state);
-      }
+      LookupStrategy strategy = search.getStrategy();
+      return strategy.getContext(controller, getIDependOn(), ControllerState.INSTALLED);
    }
 }
-
-

@@ -21,14 +21,10 @@
 */
 package org.jboss.dependency.plugins.graph;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
-import org.jboss.dependency.plugins.AbstractController;
-import org.jboss.dependency.plugins.ScopedController;
-import org.jboss.dependency.spi.ControllerContext;
-import org.jboss.dependency.spi.ControllerState;
 import org.jboss.dependency.spi.graph.LookupStrategy;
 import org.jboss.dependency.spi.graph.SearchInfo;
 import org.jboss.metadata.spi.scope.ScopeKey;
@@ -38,11 +34,14 @@ import org.jboss.metadata.spi.scope.ScopeKey;
  *
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
-public class ScopeKeySearchInfo implements SearchInfo
+public class ScopeKeySearchInfo implements SearchInfo, Serializable
 {
+   private static final long serialVersionUID = 1L;
+
    public static final String SCOPE_KEY = "ScopeKey";
    private ScopeKey scopeKey;
    private Map<String, ?> info;
+   private transient LookupStrategy strategy;
 
    public ScopeKeySearchInfo(ScopeKey scopeKey)
    {
@@ -66,78 +65,9 @@ public class ScopeKeySearchInfo implements SearchInfo
 
    public LookupStrategy getStrategy()
    {
-      return new ScopeKeyLookupStrategy();
-   }
+      if (strategy == null)
+         strategy = new ScopeKeyLookupStrategy(scopeKey);
 
-   private class ScopeKeyLookupStrategy extends HierarchyLookupStrategy
-   {
-      protected ControllerContext getContextInternal(AbstractController controller, Object name, ControllerState state)
-      {
-         // go all the way to the top
-         AbstractController parent = controller.getParentController();
-         while (parent != null)
-         {
-            controller = parent;
-            parent = controller.getParentController();
-         }
-
-         AbstractController match = findMatchingScopedController(controller);
-         if (match != null)
-            return getLocalContext(match, name, state);
-
-         return null;
-      }
-
-      /**
-       * Find scope key matching scoped controller.
-       *
-       * @param current the current controller
-       * @return match or null if no match
-       */
-      private AbstractController findMatchingScopedController(AbstractController current)
-      {
-         boolean related = true; // by default it's related
-
-         if (current instanceof ScopedController)
-         {
-            ScopedController scopedController = (ScopedController)current;
-            ScopeKey key = scopedController.getScopeKey();
-            // see if this is even related, so that we don't go fwd for nothing
-            if (key != null)
-            {
-               // exact match
-               if (scopeKey.equals(key))
-                  return current;
-
-               related = false; // we have key, should prove that it's related
-               ScopeKey ck = scopeKey;
-               int keySize = key.getScopes().size();
-               int ckSize = ck.getScopes().size();
-               while(ck != null && keySize < ckSize)
-               {
-                  if (key.isParent(ck))
-                  {
-                     related = true;
-                     break;
-                  }
-                  ck = ck.getParent();
-                  ckSize--;
-               }
-            }
-         }
-
-         if (related)
-         {
-            Set<AbstractController> children = current.getControllers();
-            for (AbstractController child : children)
-            {
-               AbstractController found = findMatchingScopedController(child);
-               if (found != null)
-                  return found;
-            }
-         }
-
-         return null;
-      }
+      return strategy;
    }
 }

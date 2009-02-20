@@ -19,51 +19,22 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
-package org.jboss.beans.metadata.api.annotations;
+package org.jboss.test.kernel.config.support;
 
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Annotation;
 
 /**
- * Do a search over GraphController for matching context.
- *
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface Search
+public class SimpleAnnotationImpl implements SimpleAnnotation
 {
-   /**
-    * Get bean.
-    * Default is no bean.
-    *
-    * @return bean name
-    */
-   String bean();
+   public String name()
+   {
+      return null;
+   }
 
-   /**
-    * Get dependent state.
-    * Default is Installed.
-    *
-    * @return dependent state.
-    */
-   String dependentState() default "";
-
-   /**
-    * Get search type.
-    *
-    * @return the search type
-    */
-   String type();
-
-   /**
-    * Get property.
-    * Default is no property.
-    *
-    * @return property name
-    */
-   String property() default "";
+   public Class<? extends Annotation> annotationType()
+   {
+      return SimpleAnnotation.class;
+   }
 }

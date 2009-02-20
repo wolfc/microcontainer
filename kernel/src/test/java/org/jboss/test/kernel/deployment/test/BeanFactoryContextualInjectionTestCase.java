@@ -19,38 +19,34 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
-package org.jboss.beans.metadata.spi;
+package org.jboss.test.kernel.deployment.test;
 
-import org.jboss.dependency.spi.ControllerState;
-import org.jboss.util.JBossInterface;
+import junit.framework.Test;
+import org.jboss.beans.metadata.spi.factory.BeanFactory;
+import org.jboss.test.kernel.deployment.support.FirstBean2;
 
 /**
- * Metadata about what a bean demands.
- * 
- * @author <a href="adrian@jboss.com">Adrian Brock</a>
- * @author <a href="ales.justin@jboss.com">Ales Justin</a>
- * @version $Revision$
+ * BeanFactoryContextualInjectionTestCase.
+ *
+ * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
-public interface DemandMetaData extends MetaDataVisitorNode, JBossInterface
+public class BeanFactoryContextualInjectionTestCase extends AbstractDeploymentTest
 {
-   /**
-    * What is demanded
-    * 
-    * @return the demand
-    */
-   Object getDemand();
-   
-   /**
-    * Get when the dependency is required
-    * 
-    * @return when the dependency is required
-    */
-   ControllerState getWhenRequired();
+   public static Test suite()
+   {
+      return suite(BeanFactoryContextualInjectionTestCase.class);
+   }
 
-   /**
-    * Get the target state
-    *
-    * @return the target state
-    */
-   ControllerState getTargetState();
+   public BeanFactoryContextualInjectionTestCase(String name) throws Throwable
+   {
+      super(name);
+   }
+
+   public void testContextualInjection() throws Throwable
+   {
+      BeanFactory bf = assertBean("FirstBean", BeanFactory.class);
+      FirstBean2 bean = (FirstBean2)bf.createBean();
+      assertNotNull(bean.getC());
+      assertNotNull(bean.getTm());
+   }
 }

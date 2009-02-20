@@ -19,51 +19,21 @@
 * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
-package org.jboss.beans.metadata.api.annotations;
+package org.jboss.beans.metadata.plugins;
 
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.jboss.dependency.plugins.graph.Search;
+import org.jboss.xb.binding.sunday.unmarshalling.ValueAdapter;
 
 /**
- * Do a search over GraphController for matching context.
+ * SearchInfoValueAdapter.
  *
- * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author <a href="ales.justin@jboss.com">Ales Justin</a>
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface Search
+public class SearchInfoValueAdapter implements ValueAdapter
 {
-   /**
-    * Get bean.
-    * Default is no bean.
-    *
-    * @return bean name
-    */
-   String bean();
-
-   /**
-    * Get dependent state.
-    * Default is Installed.
-    *
-    * @return dependent state.
-    */
-   String dependentState() default "";
-
-   /**
-    * Get search type.
-    *
-    * @return the search type
-    */
-   String type();
-
-   /**
-    * Get property.
-    * Default is no property.
-    *
-    * @return property name
-    */
-   String property() default "";
+   @SuppressWarnings("unchecked")
+   public Object cast(Object o, Class c)
+   {
+      return Search.getInstance((String)o);
+   }
 }
