@@ -19,24 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.test.kernel.deployment.support;
-
-import java.util.Map;
-import java.util.Set;
+package org.jboss.kernel.plugins.annotations;
 
 /**
+ * Filter annotation plugins.
+ *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-@SuppressWarnings("unchecked")
-public class NullifyTestBean1
+interface AnnotationPluginFilter
 {
-   public void setSomething(Set set)
-   {
-      System.out.println(set);
-   }
-
-   public void setSomething(Map map)
-   {
-      System.out.println(map);
-   }
+   /**
+    * Do we accept the plugin.
+    *
+    * @param plugin the current plugin
+    * @return true if we match the plugin, false otherwise
+    */
+   boolean accept(MetaDataAnnotationPlugin plugin);
 }

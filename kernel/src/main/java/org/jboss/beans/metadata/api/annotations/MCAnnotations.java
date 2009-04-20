@@ -19,24 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.test.kernel.deployment.support;
+package org.jboss.beans.metadata.api.annotations;
 
-import java.util.Map;
-import java.util.Set;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * Possible IoC annotations.
+ *
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-@SuppressWarnings("unchecked")
-public class NullifyTestBean1
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MCAnnotations
 {
-   public void setSomething(Set set)
-   {
-      System.out.println(set);
-   }
+   /**
+    * Possible annotation classes.
+    *
+    * @return the possible annotation classes
+    */
+   Class<? extends Annotation>[] value() default {};
 
-   public void setSomething(Map map)
-   {
-      System.out.println(map);
-   }
+   /**
+    * Should we ignore IoC annotations lookup.
+    *
+    * @return true if we should ignore IoC annotations scan, false otherwise
+    */
+   boolean ignore() default false;
 }

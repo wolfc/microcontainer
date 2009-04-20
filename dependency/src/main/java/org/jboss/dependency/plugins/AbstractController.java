@@ -1039,6 +1039,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
       Set<ControllerContext> resolved = resolveContexts(unresolved, toState, trace);
       if (resolved.isEmpty() == false)
       {
+         Set<ControllerContext> toProcess = new HashSet<ControllerContext>();
          for (ControllerContext context : resolved)
          {
             Object name = context.getName();
@@ -1054,22 +1055,54 @@ public class AbstractController extends JBossObject implements Controller, Contr
             }
             else
             {
-               try
+               toProcess.add(context);
+            }
+         }
+         try
+         {
+            if (toProcess.isEmpty() == false)
+            {
+               for (Iterator<ControllerContext> iter = toProcess.iterator(); iter.hasNext(); )
                {
-                  if (trace)
-                     log.trace("Dependencies resolved " + name + " for " + toState.getStateString());
-
-                  if (incrementState(context, trace))
+                  ControllerContext context = iter.next();
+                  iter.remove();
+                  Object name = context.getName();
+                  try
                   {
-                     resolutions = true;
-                     if (trace)
-                        log.trace(name + " " + toState.getStateString());
+                     if (fromState.equals(context.getState()) == false)
+                     {
+                        if (trace)
+                           log.trace("Skipping already installed " + name + " for " + toState.getStateString());
+                     }
+                     else
+                     {
+                        if (trace)
+                           log.trace("Dependencies resolved " + name + " for " + toState.getStateString());
+
+                        if (incrementState(context, trace))
+                        {
+                           resolutions = true;
+                           if (trace)
+                              log.trace(name + " " + toState.getStateString());
+                        }
+                        
+                     }
+                  }
+                  finally
+                  {
+                     installing.remove(context);
                   }
                }
-               finally
-               {
+            }
+         }
+         finally
+         {
+            // If we get here something has gone seriously wrong,
+            // but try to tidyup as much state as possible
+            if (toProcess.isEmpty() == false)
+            {
+               for (ControllerContext context : toProcess)
                   installing.remove(context);
-               }
             }
          }
       }
