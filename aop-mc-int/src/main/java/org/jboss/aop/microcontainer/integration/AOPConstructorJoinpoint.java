@@ -30,7 +30,9 @@ import org.jboss.aop.Advisor;
 import org.jboss.aop.AspectManager;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.ConstructorInvocation;
+import org.jboss.aop.microcontainer.annotations.DisabledType;
 import org.jboss.aop.microcontainer.beans.AspectManagerFactory;
+import org.jboss.aop.microcontainer.annotations.DisabledType;
 import org.jboss.aop.proxy.container.AOPProxyFactory;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
 import org.jboss.aop.proxy.container.ContainerCache;
@@ -87,10 +89,21 @@ public class AOPConstructorJoinpoint extends BasicConstructorJoinPoint
       this.metaData = MetaData.class.cast(metaData);
    }
 
+   /**
+    * Should we bypass AOP.
+    *
+    * @param metaData the metadata instance
+    * @return true if we should bypass aop, false otherwise
+    */
+   protected boolean bypassAOP(MetaData metaData)
+   {
+      return DisableAOPHelper.isAOPDisabled(metaData, DisabledType.POINTCUTS);
+   }
+
    @SuppressWarnings("deprecation")
    public Object dispatch() throws Throwable
    {
-      if (DisableAOPHelper.isAOPDisabled(metaData))
+      if (bypassAOP(metaData))
       {
          return super.dispatch();
       }
