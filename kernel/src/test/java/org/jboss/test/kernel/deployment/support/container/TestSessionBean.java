@@ -35,6 +35,9 @@ public class TestSessionBean
 
    @Inject(bean = KernelConstants.KERNEL_CONTROLLER_NAME)
    private Controller controller;
+   
+   // Will be injected by method level @Inject
+   private Controller oneMoreController;
 
    public void validate()
    {
@@ -42,5 +45,13 @@ public class TestSessionBean
          throw new RuntimeException("Other is null");
       if (controller == null)
          throw new RuntimeException("Controller is null");
+      if (oneMoreController == null)
+    	  throw new RuntimeException("Other controller is null - Method level @Inject did not work");
+   }
+   
+   @Inject (bean = KernelConstants.KERNEL_CONTROLLER_NAME)
+   public void setOneMoreController(Controller cont)
+   {
+	   this.oneMoreController = cont;
    }
 }

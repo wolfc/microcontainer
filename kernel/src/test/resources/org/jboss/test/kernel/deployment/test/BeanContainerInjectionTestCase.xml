@@ -3,6 +3,8 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
   <bean name="InjectPlugin" class="org.jboss.test.kernel.deployment.support.container.InjectWrapperFieldAnnotationPlugin"/>
+  
+  <bean name="InjectMethodAnnotationPlugin" class="org.jboss.test.kernel.deployment.support.container.InjectWrapperMethodAnnotationPlugin"/>
 
   <bean name="EJBPlugin" class="org.jboss.test.kernel.deployment.support.container.EJBAnnotationPlugin">
     <property name="prefix">java:env/comp</property>
