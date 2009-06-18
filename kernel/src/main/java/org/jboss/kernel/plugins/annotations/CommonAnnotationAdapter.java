@@ -41,16 +41,16 @@ import org.jboss.beans.metadata.api.annotations.MCAnnotations;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.spi.MetaData;
 import org.jboss.metadata.spi.signature.ConstructorSignature;
+import org.jboss.metadata.spi.signature.DeclaredMethodSignature;
 import org.jboss.metadata.spi.signature.FieldSignature;
-import org.jboss.metadata.spi.signature.MethodSignature;
 import org.jboss.metadata.spi.signature.Signature;
 import org.jboss.reflect.spi.AnnotatedInfo;
 import org.jboss.reflect.spi.ClassInfo;
 import org.jboss.reflect.spi.ConstructorInfo;
 import org.jboss.reflect.spi.FieldInfo;
 import org.jboss.reflect.spi.MethodInfo;
-import org.jboss.reflect.spi.TypeInfoFactory;
 import org.jboss.reflect.spi.TypeInfo;
+import org.jboss.reflect.spi.TypeInfoFactory;
 
 /**
  * Common bean annotation handler.
@@ -341,7 +341,7 @@ public abstract class CommonAnnotationAdapter<T extends MetaDataAnnotationPlugin
             // direct == check is OK
             if (declaringCI != objectTI && visitedMethods.contains(mi) == false)
             {
-               Signature mis = new MethodSignature(mi);
+               Signature mis = new DeclaredMethodSignature(mi);
                MetaData cmdr = retrieval.getComponentMetaData(mis);
                if (cmdr != null)
                {
@@ -372,7 +372,7 @@ public abstract class CommonAnnotationAdapter<T extends MetaDataAnnotationPlugin
          {
             if (smi.isStatic() && smi.isPublic())
             {
-               Signature mis = new MethodSignature(smi);
+               Signature mis = new DeclaredMethodSignature(smi);
                MetaData cmdr = retrieval.getComponentMetaData(mis);
                if (cmdr != null)
                {
@@ -428,7 +428,7 @@ public abstract class CommonAnnotationAdapter<T extends MetaDataAnnotationPlugin
          return;
       
       visitedMethods.add(method);
-      Signature sis = new MethodSignature(method);
+      Signature sis = new DeclaredMethodSignature(method);
       MetaData cmdr = retrieval.getComponentMetaData(sis);
       if (cmdr != null)
       {
