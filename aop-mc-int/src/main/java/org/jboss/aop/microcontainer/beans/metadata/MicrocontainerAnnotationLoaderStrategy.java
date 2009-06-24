@@ -222,7 +222,7 @@ public class MicrocontainerAnnotationLoaderStrategy extends AspectAnnotationLoad
    {
       DynamicCflowBeanMetaDataFactory dcflow = new DynamicCflowBeanMetaDataFactory();
       dcflow.setName(name);
-      dcflow.setClazz(clazz);
+      dcflow.setBean(clazz);
       factories.add(dcflow);
    }
 
@@ -238,7 +238,7 @@ public class MicrocontainerAnnotationLoaderStrategy extends AspectAnnotationLoad
       IntroductionBeanMetaDataFactory intro = new IntroductionBeanMetaDataFactory();
       intro.setName(introduction.getName());
       intro.setExpr(introduction.getExpr());
-      intro.setClazz(introduction.getTarget());
+      intro.setBean(introduction.getTarget());
       if (introduction.getInterfaces() != null)
       {
          intro.setInterfaces(createCommaSeparatedInterfaceString(introduction.getInterfaces()));

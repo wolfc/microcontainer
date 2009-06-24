@@ -50,8 +50,6 @@ public class ArrayReplacementBeanMetaDataFactory extends AspectManagerAwareBeanM
    
    String expr;
 
-   String clazz;
-   
    public String getExpr()
    {
       return expr;
@@ -61,17 +59,6 @@ public class ArrayReplacementBeanMetaDataFactory extends AspectManagerAwareBeanM
    public void setExpr(String expr)
    {
       this.expr = expr;
-   }
-
-   public String getClazz()
-   {
-      return clazz;
-   }
-
-   @XmlAttribute(name="class")
-   public void setClazz(String clazz)
-   {
-      this.clazz = clazz;
    }
 
    @Override
@@ -86,7 +73,7 @@ public class ArrayReplacementBeanMetaDataFactory extends AspectManagerAwareBeanM
 
       BeanMetaDataBuilder builder = AOPBeanMetaDataBuilder.createBuilder(name, ArrayReplacement.class.getName());
       builder.addPropertyMetaData("name", name);
-      builder.addPropertyMetaData("classes", clazz);
+      builder.addPropertyMetaData("classes", bean);
       builder.addPropertyMetaData("expr", expr);
       setAspectManagerProperty(builder);
       

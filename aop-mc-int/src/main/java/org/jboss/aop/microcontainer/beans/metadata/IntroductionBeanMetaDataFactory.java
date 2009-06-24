@@ -55,7 +55,6 @@ public class IntroductionBeanMetaDataFactory extends AspectManagerAwareBeanMetaD
 {
    private static final long serialVersionUID = 1L;
 
-   private String clazz;
    private String expr;
    private String interfaces;
    private List<MixinData> mixins = new ArrayList<MixinData>();
@@ -64,17 +63,6 @@ public class IntroductionBeanMetaDataFactory extends AspectManagerAwareBeanMetaD
    {
    }
    
-   public String getClazz()
-   {
-      return clazz;
-   }
-
-   @XmlAttribute(name="class")
-   public void setClazz(String clazz)
-   {
-      this.clazz = clazz;
-   }
-
    public String getExpr()
    {
       return expr;
@@ -123,9 +111,9 @@ public class IntroductionBeanMetaDataFactory extends AspectManagerAwareBeanMetaD
       BeanMetaDataBuilder introductionBuilder = AOPBeanMetaDataBuilder.createBuilder(name, IntroductionBinding.class.getName());
       introductionBuilder.addPropertyMetaData("name", name);
       setAspectManagerProperty(introductionBuilder);
-      if (clazz != null)
+      if (bean != null)
       {
-         introductionBuilder.addPropertyMetaData("classes", clazz);
+         introductionBuilder.addPropertyMetaData("classes", bean);
       }
       if (expr != null)
       {

@@ -54,8 +54,6 @@ public class MetaDataBeanMetaDataFactory extends AspectManagerAwareBeanMetaDataF
 
    String tag;
    
-   String clazz;
-
    //It would have been nice to handle the normal metadata elements handled by the SimpleMetaDataElements in a typed
    //way, but what if we have a custom metadata loader that expects elements with the same names?
    List<Element> elements;
@@ -69,17 +67,6 @@ public class MetaDataBeanMetaDataFactory extends AspectManagerAwareBeanMetaDataF
    public void setTag(String tag)
    {
       this.tag = tag;
-   }
-
-   public String getClazz()
-   {
-      return clazz;
-   }
-   
-   @XmlAttribute(name="class")
-   public void setClazz(String clazz)
-   {
-      this.clazz = clazz;
    }
 
    public List<Element> getElements()
@@ -103,10 +90,10 @@ public class MetaDataBeanMetaDataFactory extends AspectManagerAwareBeanMetaDataF
       }
       BeanMetaDataBuilder builder = AOPBeanMetaDataBuilder.createBuilder(name, ClassMetaData.class.getName());
       builder.addPropertyMetaData("tag", tag);
-      builder.addPropertyMetaData("className", clazz);
+      builder.addPropertyMetaData("className", bean);
       HashMap<String, String> attributes = new HashMap<String, String>();
       attributes.put("tag", tag);
-      attributes.put("class", clazz);
+      attributes.put("class", bean);
       builder.addPropertyMetaData("element", XmlLoadableRootElementUtil.getRootElementString(elements, "metadata", attributes));
       
       setAspectManagerProperty(builder);

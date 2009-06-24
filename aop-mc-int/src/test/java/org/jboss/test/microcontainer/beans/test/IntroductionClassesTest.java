@@ -38,7 +38,12 @@ public abstract class IntroductionClassesTest extends AOPMicrocontainerTest
    {
       super(name);
    }
-
+   
+//   public void setUp() throws Exception
+//   {
+//      super.setUp();
+//   }
+//
    public void testIntroduced() throws Exception
    {
       TestAspect.invoked = false;

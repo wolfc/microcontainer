@@ -52,8 +52,6 @@ public class MetaDataLoaderBeanMetaDataFactory extends AspectManagerAwareBeanMet
 
    private String tag;
    
-   private String clazz;
-
    private List<Element> elements;
 
    public String getTag()
@@ -67,17 +65,6 @@ public class MetaDataLoaderBeanMetaDataFactory extends AspectManagerAwareBeanMet
       this.tag = tag;
    }
 
-   public String getClazz()
-   {
-      return clazz;
-   }
-   
-   @XmlAttribute(name="class")
-   public void setClazz(String clazz)
-   {
-      this.clazz = clazz;
-   }
-   
    public List<Element> getElements()
    {
       return elements;
@@ -99,7 +86,7 @@ public class MetaDataLoaderBeanMetaDataFactory extends AspectManagerAwareBeanMet
       }
       BeanMetaDataBuilder builder = AOPBeanMetaDataBuilder.createBuilder(name, ClassMetaDataLoader.class.getName());
       builder.addPropertyMetaData("tag", tag);
-      builder.addPropertyMetaData("className", clazz);
+      builder.addPropertyMetaData("className", bean);
       HashMap<String, String> attributes = new HashMap<String, String>();
       attributes.put("tag", tag);
       attributes.put("name", name);

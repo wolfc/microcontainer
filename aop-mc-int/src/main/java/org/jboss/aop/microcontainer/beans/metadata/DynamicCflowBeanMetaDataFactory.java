@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -49,20 +48,7 @@ public class DynamicCflowBeanMetaDataFactory extends AspectManagerAwareBeanMetaD
 {
    private static final long serialVersionUID = 1L;
 
-   private String clazz;
-   
    private List<Element> elements;
-
-   public String getClazz()
-   {
-      return clazz;
-   }
-
-   @XmlAttribute(name="class")
-   public void setClazz(String clazz)
-   {
-      this.clazz = clazz;
-   }
 
    public List<Element> getElements()
    {
@@ -82,10 +68,10 @@ public class DynamicCflowBeanMetaDataFactory extends AspectManagerAwareBeanMetaD
       
       BeanMetaDataBuilder builder = AOPBeanMetaDataBuilder.createBuilder(name, DynamicCFlowDef.class.getName());
       builder.addPropertyMetaData("name", name);
-      builder.addPropertyMetaData("className", clazz);
+      builder.addPropertyMetaData("className", bean);
       HashMap<String, String> attributes = new HashMap<String, String>();
       attributes.put("name", name);
-      attributes.put("class", clazz);
+      attributes.put("class", bean);
       if (elements != null && elements.size() > 0)
       {
          builder.addPropertyMetaData("element", XmlLoadableRootElementUtil.getRootElementString(elements, "dynamic-cflow", attributes));
