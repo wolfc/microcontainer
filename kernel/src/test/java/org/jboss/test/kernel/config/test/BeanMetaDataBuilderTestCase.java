@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,17 +35,19 @@ import junit.framework.Test;
 import org.jboss.beans.metadata.api.model.AutowireType;
 import org.jboss.beans.metadata.api.model.FromContext;
 import org.jboss.beans.metadata.plugins.AbstractBeanMetaData;
-import org.jboss.beans.metadata.plugins.AbstractRelatedClassMetaData;
-import org.jboss.beans.metadata.plugins.InstallCallbackMetaData;
-import org.jboss.beans.metadata.plugins.UninstallCallbackMetaData;
 import org.jboss.beans.metadata.plugins.AbstractDependencyValueMetaData;
 import org.jboss.beans.metadata.plugins.AbstractInjectionValueMetaData;
+import org.jboss.beans.metadata.plugins.AbstractRelatedClassMetaData;
+import org.jboss.beans.metadata.plugins.AbstractValueFactoryMetaData;
+import org.jboss.beans.metadata.plugins.InstallCallbackMetaData;
+import org.jboss.beans.metadata.plugins.UninstallCallbackMetaData;
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.AnnotationMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
 import org.jboss.beans.metadata.spi.CallbackMetaData;
 import org.jboss.beans.metadata.spi.LifecycleMetaData;
+import org.jboss.beans.metadata.spi.ParameterMetaData;
 import org.jboss.beans.metadata.spi.PropertyMetaData;
 import org.jboss.beans.metadata.spi.RelatedClassMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
@@ -1013,5 +1016,36 @@ public class BeanMetaDataBuilderTestCase extends AbstractKernelConfigTest
       assertEquals("foobar", inject.getUnderlyingValue());
       assertEquals(ControllerState.CREATE, inject.getDependentState());
       assertEquals(Search.CHILD_ONLY_DEPTH, inject.getSearch());
+   }
+
+   public void testValueFactory() throws Throwable
+   {
+      BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder("test");
+      ValueMetaData v1 = builder.createValueFactory("other", "somemethod1", "key");
+      builder.addPropertyMetaData("v1", v1);
+      ParameterMetaData p1 = builder.createParameter(123);
+      ParameterMetaData p2 = builder.createParameter(builder.createInject("third"), Long.class.getName(), 1);
+      ValueMetaData v2 = builder.createValueFactory("other", "somemethod2", p1, p2);
+      builder.addPropertyMetaData("v2", v2);
+      BeanMetaData bmd = builder.getBeanMetaData();
+
+      Set<PropertyMetaData> properties = bmd.getProperties();
+      assertNotNull(properties);
+      assertEquals(2, properties.size());
+      Iterator<PropertyMetaData> iter = properties.iterator();
+      // 1
+      PropertyMetaData pmd = iter.next();
+      ValueMetaData vmd = pmd.getValue();
+      AbstractValueFactoryMetaData vf = assertInstanceOf(vmd, AbstractValueFactoryMetaData.class, false);
+      assertEquals("other", vf.getValue());
+      assertTrue(vf.getMethod().startsWith("somemethod"));
+      assertEquals(Integer.parseInt(vf.getMethod().substring("somemethod".length())), vf.getParameters().size());
+      // 2
+      pmd = iter.next();
+      vmd = pmd.getValue();
+      vf = assertInstanceOf(vmd, AbstractValueFactoryMetaData.class, false);
+      assertEquals("other", vf.getValue());
+      assertTrue(vf.getMethod().startsWith("somemethod"));
+      assertEquals(Integer.parseInt(vf.getMethod().substring("somemethod".length())), vf.getParameters().size());
    }
 }

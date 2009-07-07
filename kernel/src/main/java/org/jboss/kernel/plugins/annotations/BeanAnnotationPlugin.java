@@ -47,6 +47,8 @@ public class BeanAnnotationPlugin extends ClassAnnotationPlugin<Bean>
    {
       AbstractBeanMetaData abmd = checkIfNotAbstractBeanMetaDataSpecific(beanMetaData);
 
+      // TODO - add missing attributes
+      
       if (abmd.getAutowireType() == null)
          abmd.setAutowireType(annotation.autowireType());
       if (abmd.getMode() == null)

@@ -32,8 +32,8 @@ import java.util.Set;
 
 import org.jboss.beans.info.spi.BeanAccessMode;
 import org.jboss.beans.metadata.api.model.AutowireType;
-import org.jboss.beans.metadata.api.model.InjectOption;
 import org.jboss.beans.metadata.api.model.FromContext;
+import org.jboss.beans.metadata.api.model.InjectOption;
 import org.jboss.beans.metadata.plugins.AbstractAnnotationMetaData;
 import org.jboss.beans.metadata.plugins.AbstractArrayMetaData;
 import org.jboss.beans.metadata.plugins.AbstractBeanMetaData;
@@ -53,16 +53,19 @@ import org.jboss.beans.metadata.plugins.AbstractPropertyMetaData;
 import org.jboss.beans.metadata.plugins.AbstractRelatedClassMetaData;
 import org.jboss.beans.metadata.plugins.AbstractSetMetaData;
 import org.jboss.beans.metadata.plugins.AbstractSupplyMetaData;
+import org.jboss.beans.metadata.plugins.AbstractValueFactoryMetaData;
 import org.jboss.beans.metadata.plugins.AbstractValueMetaData;
 import org.jboss.beans.metadata.plugins.DirectAnnotationMetaData;
 import org.jboss.beans.metadata.plugins.StringValueMetaData;
 import org.jboss.beans.metadata.plugins.ThisValueMetaData;
+import org.jboss.beans.metadata.plugins.AbstractParameterMetaData;
 import org.jboss.beans.metadata.spi.AnnotationMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
 import org.jboss.beans.metadata.spi.ClassLoaderMetaData;
 import org.jboss.beans.metadata.spi.DemandMetaData;
 import org.jboss.beans.metadata.spi.DependencyMetaData;
+import org.jboss.beans.metadata.spi.ParameterMetaData;
 import org.jboss.beans.metadata.spi.PropertyMetaData;
 import org.jboss.beans.metadata.spi.RelatedClassMetaData;
 import org.jboss.beans.metadata.spi.SupplyMetaData;
@@ -1021,6 +1024,20 @@ class BeanMetaDataBuilderImpl extends BeanMetaDataBuilder
    public ValueMetaData createValue(Object value)
    {
       return new AbstractValueMetaData(value);
+   }
+
+   public ValueMetaData createValueFactory(Object bean, String method, ParameterMetaData... parameters)
+   {
+      AbstractValueFactoryMetaData value = new AbstractValueFactoryMetaData(bean, method);
+      value.setParameters(Arrays.asList(parameters));
+      return value;
+   }
+
+   public ParameterMetaData createParameter(ValueMetaData value, String type, int index)
+   {
+      ParameterMetaData parameter = new AbstractParameterMetaData(type, value);
+      parameter.setIndex(index);
+      return parameter;
    }
 
    public ValueMetaData createString(String type, String value)
