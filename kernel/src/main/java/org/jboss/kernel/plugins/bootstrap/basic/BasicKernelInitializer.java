@@ -36,7 +36,7 @@ import org.jboss.kernel.spi.validation.KernelBeanValidator;
 
 /**
  * Bootstrap the kernel.
- * 
+ *
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @author <a href="ales.justin@jboss.com">Ales Justin</a>
  * @version $Revision$
@@ -46,18 +46,19 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
 {
    /**
     * Create a new basic kernel factory
-    * 
+    *
     * @throws Exception for any error
     */
    public BasicKernelInitializer() throws Exception
    {
    }
-   
+
    public void initKernel(Kernel kernel) throws Throwable
    {
       KernelMetaDataRepository metaDataRepository = createKernelMetaDataRepository(kernel);
       if (trace)
          log.trace("Using MetaDataRepository: " + metaDataRepository);
+      metaDataRepository.setKernel(kernel);
       kernel.setMetaDataRepository(metaDataRepository);
 
       org.jboss.kernel.spi.registry.KernelRegistry registry = createKernelRegistry(kernel);
@@ -65,25 +66,25 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
          log.trace("Using Registry: " + registry);
       registry.setKernel(kernel);
       kernel.setRegistry(registry);
-      
+
       KernelEventManager eventManager = createKernelEventManager(kernel);
       if (trace)
          log.trace("Using EventManager: " + eventManager);
       eventManager.setKernel(kernel);
       kernel.setEventManager(eventManager);
-      
+
       KernelConfigurator configurator = createKernelConfigurator(kernel);
       if (trace)
          log.trace("Using Configurator: " + configurator);
       configurator.setKernel(kernel);
       kernel.setConfigurator(configurator);
-      
+
       KernelController controller = createKernelController(kernel);
       if (trace)
          log.trace("Using Controller: " + controller);
       controller.setKernel(kernel);
       kernel.setController(controller);
-      
+
       KernelBus bus = createKernelBus(kernel);
       if (trace)
          log.trace("Using Bus: " + bus);
@@ -108,10 +109,10 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
       register(kernel, KernelConstants.KERNEL_METADATA_REPOSITORY_NAME, metaDataRepository);
       register(kernel, KernelConstants.KERNEL_BEAN_VALIDATOR_NAME, validator);
    }
-   
+
    /**
     * Create the kernel bus
-    * 
+    *
     * @param kernel the kernel
     * @return the kernel bus
     * @throws Throwable for any error
@@ -120,10 +121,10 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
    {
       return kernel.getConfig().createKernelBus();
    }
-   
+
    /**
     * Create the configurator
-    * 
+    *
     * @param kernel the kernel
     * @return the configurator
     * @throws Throwable for any error
@@ -132,10 +133,10 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
    {
       return kernel.getConfig().createKernelConfigurator();
    }
-   
+
    /**
-    * Create the kernel controller 
-    * 
+    * Create the kernel controller
+    *
     * @param kernel the kernel
     * @return the kernel controller
     * @throws Throwable for any error
@@ -144,10 +145,10 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
    {
       return kernel.getConfig().createKernelController();
    }
-   
+
    /**
     * Create the kernel event manager
-    * 
+    *
     * @param kernel the kernel
     * @return the kernel event manager
     * @throws Throwable for any error
@@ -156,10 +157,10 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
    {
       return kernel.getConfig().createKernelEventManager();
    }
-   
+
    /**
     * Create the kernel registry
-    * 
+    *
     * @param kernel the kernel
     * @return the kernel registry
     * @throws Throwable for any error
@@ -168,10 +169,10 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
    {
       return kernel.getConfig().createKernelRegistry();
    }
-   
+
    /**
     * Create the meta data repository
-    * 
+    *
     * @param kernel the kernel
     * @return the meta data repository
     * @throws Throwable for any error
@@ -195,7 +196,7 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
 
    /**
     * Register an object
-    * 
+    *
     * @param kernel the kernel
     * @param name the name
     * @param object the object
@@ -208,7 +209,7 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
 
    /**
     * Register an object
-    * 
+    *
     * @param kernel the kernel
     * @param name the name
     * @param object the object
@@ -220,10 +221,10 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
       org.jboss.kernel.spi.registry.KernelRegistry registry = kernel.getRegistry();
       registry.registerEntry(name, entry);
    }
-   
+
    /**
     * Get the registration name
-    * 
+    *
     * @param name the name
     * @return the registration name
     * @throws Throwable for any error
@@ -235,7 +236,7 @@ public class BasicKernelInitializer extends AbstractKernelInitializer
 
    /**
     * Create a kernel registry entry
-    * 
+    *
     * @param kernel the kernel
     * @param object the object
     * @return the entry
