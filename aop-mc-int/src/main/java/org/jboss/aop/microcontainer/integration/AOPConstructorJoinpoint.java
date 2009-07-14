@@ -42,7 +42,7 @@ import org.jboss.metadata.spi.MetaData;
 import org.jboss.metadata.spi.scope.CommonLevels;
 import org.jboss.metadata.spi.scope.CommonLevelsUtil;
 import org.jboss.metadata.spi.scope.ScopeLevel;
-import org.jboss.metadata.spi.signature.MethodSignature;
+import org.jboss.metadata.spi.signature.DeclaredMethodSignature;
 import org.jboss.reflect.spi.ClassInfo;
 import org.jboss.reflect.spi.ConstructorInfo;
 import org.jboss.reflect.spi.MethodInfo;
@@ -183,7 +183,7 @@ public class AOPConstructorJoinpoint extends BasicConstructorJoinPoint
     */
    private boolean methodHasSubInstanceMetaData(MetaData metaData, MethodInfo mi)
    {
-      MethodSignature sig = new MethodSignature(mi);
+      DeclaredMethodSignature sig = new DeclaredMethodSignature(mi);
       MetaData methodMD = metaData.getComponentMetaData(sig);
 
       if (checkForMetaDataAtSubInstanceLevel(methodMD))
