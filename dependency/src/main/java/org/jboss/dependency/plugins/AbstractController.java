@@ -1231,7 +1231,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
 
                               for (ControllerContext dependent : dependents)
                               {
-                                 if (isBeforeState(dependent.getState(), whenRequired) == false)
+                                 boolean selfDependency = (dependent == context);
+                                 if (selfDependency == false && isBeforeState(dependent.getState(), whenRequired) == false)
                                     uninstallContext(dependent, whenRequired, trace);
                               }
                            }
