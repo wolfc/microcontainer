@@ -42,22 +42,26 @@ public class ControllerTestSuite extends TestSuite
    {
       TestSuite suite = new TestSuite("Dependency Controller Tests");
 
-      suite.addTest(BasicControllerTestCase.suite());
-      suite.addTest(BasicDependencyTestCase.suite());
-      suite.addTest(CrossContextDependencyTestCase.suite());
-      suite.addTest(ManualControllerTestCase.suite());
-      suite.addTest(ChangeAutomaticControllerTestCase.suite());
-      suite.addTest(ChangeDependencyTestCase.suite());
-      suite.addTest(DisabledControllerTestCase.suite());
-      suite.addTest(OnDemandDependencyTestCase.suite());
-      suite.addTest(RecursiveControllerActionTestCase.suite());
-      suite.addTest(ErrorControllerActionTestCase.suite());
-      suite.addTest(CrossContextDependencyBadObjectNameTestCase.suite());
       suite.addTest(AliasDependencyTestCase.suite());
       suite.addTest(AliasUnitTestCase.suite());
-      suite.addTest(ShutdownControllerTestCase.suite());
       suite.addTest(BadDependencyInfoTestCase.suite());
+      suite.addTest(BasicControllerTestCase.suite());
+      suite.addTest(BasicDependencyTestCase.suite());
+      suite.addTest(CardinalityTestCase.suite());
+      suite.addTest(ChangeAutomaticControllerTestCase.suite());
+      suite.addTest(ChangeDependencyTestCase.suite());
+      suite.addTest(CrossContextDependencyBadObjectName2TestCase.suite());
+      suite.addTest(CrossContextDependencyBadObjectNameTestCase.suite());
+      suite.addTest(CrossContextDependencyTestCase.suite());
+      suite.addTest(DisabledControllerTestCase.suite());
+      suite.addTest(ErrorControllerActionTestCase.suite());
+      suite.addTest(ManualControllerTestCase.suite());
+      suite.addTest(OnDemandDependencyTestCase.suite());
       suite.addTest(PreconfiguredScopeTestCase.suite());
+      suite.addTest(RecursiveControllerActionTestCase.suite());
+      suite.addTest(SelfDependencyTestCase.suite());
+      suite.addTest(ShutdownControllerTestCase.suite());
+      suite.addTest(StateConsistencyUnitTestCase.suite());
 
       return suite;
    }
