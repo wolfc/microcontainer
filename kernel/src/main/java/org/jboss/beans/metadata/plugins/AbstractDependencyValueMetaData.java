@@ -249,7 +249,7 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
     */
    protected void addOptionalDependency(Controller controller, ControllerContext lookup)
    {
-      OptionalDependencyItem dependency = new OptionalDependencyItem(context.getName(), lookup.getName(), lookup.getState());
+      OptionalDependencyItem dependency = new OptionalDependencyItem(context.getName(), optionalWhenRequired, lookup.getName(), lookup.getState(), search);
       context.getDependencyInfo().addIDependOn(dependency);
       lookup.getDependencyInfo().addDependsOnMe(dependency);
    }
@@ -374,9 +374,9 @@ public class AbstractDependencyValueMetaData extends AbstractValueMetaData
    /**
     * Optional depedency item.
     */
-   protected class OptionalDependencyItem extends SearchDependencyItem
+   protected static class OptionalDependencyItem extends SearchDependencyItem
    {
-      public OptionalDependencyItem(Object name, Object iDependOn, ControllerState dependentState)
+      public OptionalDependencyItem(Object name, ControllerState optionalWhenRequired, Object iDependOn, ControllerState dependentState, SearchInfo search)
       {
          super(name, iDependOn, optionalWhenRequired, dependentState, search);
          setResolved(true);

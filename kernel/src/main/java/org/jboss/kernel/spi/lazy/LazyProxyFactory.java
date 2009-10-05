@@ -36,7 +36,7 @@ import org.jboss.kernel.spi.config.KernelConfigurator;
  */
 public class LazyProxyFactory
 {
-   private static LazyInitializer initializer;
+   private static volatile LazyInitializer initializer;
    private static Map<String, String> initializerMap;
 
    static

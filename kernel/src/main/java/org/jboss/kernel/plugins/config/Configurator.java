@@ -56,6 +56,10 @@ import org.jboss.reflect.spi.TypeInfoFactory;
  */
 public class Configurator extends Config
 {
+   final static String[] NO_PARAMS = new String[0];
+   final static Object[] NO_PARAM_VALUES = new Object[0]; 
+   
+   
    /**
     * Instantiate and configure a bean
     *
@@ -573,7 +577,7 @@ public class Configurator extends Config
    public static String[] getParameterTypes(boolean trace, List<ParameterMetaData> parameters) throws Throwable
    {
       if (parameters == null)
-         return null;
+         return NO_PARAMS;
 
       String[] paramTypes = new String[parameters.size()];
       int x = 0;
@@ -596,7 +600,7 @@ public class Configurator extends Config
    public static String[] getParameterTypes(boolean trace, TypeInfo[] parameters) throws Throwable
    {
       if (parameters == null)
-         return null;
+         return NO_PARAMS;
 
       String[] paramTypes = new String[parameters.length];
       int x = 0;
@@ -618,7 +622,7 @@ public class Configurator extends Config
    public static Object[] getParameters(boolean trace, ClassLoader cl, TypeInfo[] pinfos, List<ParameterMetaData> parameters) throws Throwable
    {
       if (parameters == null)
-         return null;
+         return NO_PARAM_VALUES;
 
       Object[] params = new Object[parameters.size()];
       int x = 0;

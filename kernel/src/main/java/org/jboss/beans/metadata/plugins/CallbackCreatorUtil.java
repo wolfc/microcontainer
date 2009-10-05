@@ -50,8 +50,8 @@ import org.jboss.reflect.spi.TypeInfo;
  */
 public class CallbackCreatorUtil
 {
-   protected static Logger log;
-   protected static CollectionCallbackItemFactory factory;
+   protected static volatile Logger log;
+   protected static volatile CollectionCallbackItemFactory factory;
 
    // layz log
    protected static Logger getLog()

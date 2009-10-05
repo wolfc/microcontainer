@@ -32,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class BasicBeanAnnotationAdapter extends AbstractBeanAnnotationAdapter
 {
-   public static BasicBeanAnnotationAdapter INSTANCE = new BasicBeanAnnotationAdapter();
+   public static final BasicBeanAnnotationAdapter INSTANCE = new BasicBeanAnnotationAdapter();
 
    /** The parameter annotation adapters */
    private Set<Annotation2ValueMetaDataAdapter<? extends Annotation>> adapters;

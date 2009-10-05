@@ -238,7 +238,7 @@ public class NestedBeanHandler
    /**
     * Simple pair class.
     */
-   private class Pair
+   private static class Pair
    {
       private MetaDataVisitorNode previous;
       private BeanMetaData bean;

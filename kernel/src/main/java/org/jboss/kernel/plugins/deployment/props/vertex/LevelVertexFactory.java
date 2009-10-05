@@ -21,6 +21,7 @@
 */
 package org.jboss.kernel.plugins.deployment.props.vertex;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import org.jboss.kernel.plugins.deployment.props.TreeVertex;
@@ -53,8 +54,10 @@ public interface LevelVertexFactory
     */
    public static Comparator<LevelVertexFactory> COMPARATOR = new LevelVertexFactoryComparator();
 
-   static class LevelVertexFactoryComparator implements Comparator<LevelVertexFactory>
+   static class LevelVertexFactoryComparator implements Comparator<LevelVertexFactory>, Serializable
    {
+      private static final long serialVersionUID = 1L;
+
       public int compare(LevelVertexFactory o1, LevelVertexFactory o2)
       {
          return o1.getOrder() - o2.getOrder();

@@ -96,9 +96,9 @@ public class AbstractDependencyMetaData extends JBossObject
          throw new IllegalArgumentException("Null or empty dependency.");
 
       KernelControllerContext context = visitor.getControllerContext();
-      DependencyItem item = new LifecycleDependencyItem(context.getName(), ControllerState.CREATE);
+      DependencyItem item = new LifecycleDependencyItem(context.getName(), dependency, ControllerState.CREATE);
       visitor.addDependency(item);
-      item = new LifecycleDependencyItem(context.getName(), ControllerState.START);
+      item = new LifecycleDependencyItem(context.getName(), dependency, ControllerState.START);
       visitor.addDependency(item);
 
       visitor.initialVisit(this);
@@ -140,7 +140,7 @@ public class AbstractDependencyMetaData extends JBossObject
    /**
     * A LifecycleDependencyItem.
     */
-   public class LifecycleDependencyItem extends AbstractDependencyItem
+   public static class LifecycleDependencyItem extends AbstractDependencyItem
    {
       /**
        * Create a new LifecycleDependencyItem.
@@ -148,7 +148,7 @@ public class AbstractDependencyMetaData extends JBossObject
        * @param name the name
        * @param state the state
        */
-      public LifecycleDependencyItem(Object name, ControllerState state)
+      public LifecycleDependencyItem(Object name, Object dependency, ControllerState state)
       {
          super(name, dependency, state, state);
       }

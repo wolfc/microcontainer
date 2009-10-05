@@ -77,7 +77,7 @@ public class BasicKernelBeanValidator extends AbstractKernelBeanValidator
       return Boolean.parseBoolean(System.getProperty(DISABLED_PROPERTY_KEY, "true"));
    }
 
-   private class DisabledFlagReader implements PrivilegedAction<Boolean>
+   private static class DisabledFlagReader implements PrivilegedAction<Boolean>
    {
       public Boolean run()
       {

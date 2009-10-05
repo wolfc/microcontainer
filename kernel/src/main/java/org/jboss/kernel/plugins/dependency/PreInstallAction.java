@@ -70,11 +70,9 @@ public class PreInstallAction extends InstallsAwareAction
          if (factory != null)
             return factory;
       }
-      if (factory == null)
-      {
-         factory = clazz.newInstance();
-         factories.put(clazz, new WeakReference<ScopeFactory<? extends Annotation>>(factory));
-      }
+
+      factory = clazz.newInstance();
+      factories.put(clazz, new WeakReference<ScopeFactory<? extends Annotation>>(factory));
       return factory;
    }
 

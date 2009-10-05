@@ -47,7 +47,7 @@ public class PropertyVertexFactory extends AbstractLevelVertexFactory
    /**
     * Property vertex.
     */
-   class PropertyVertex extends ValueMetaDataAwareVertex<AbstractPropertyMetaData, BeanVertexFactory.BeanVertex>
+   static class PropertyVertex extends ValueMetaDataAwareVertex<AbstractPropertyMetaData, BeanVertexFactory.BeanVertex>
    {
       public PropertyVertex(String name)
       {

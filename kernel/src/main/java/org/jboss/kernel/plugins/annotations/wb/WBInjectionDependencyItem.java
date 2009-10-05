@@ -41,7 +41,9 @@ public class WBInjectionDependencyItem extends ClassDependencyItem
    public WBInjectionDependencyItem(Object name, ControllerState whenRequired, Class<?> type, Annotation[] annotations)
    {
       super(name, type, whenRequired, ControllerState.INSTALLED);
-      this.annotations = annotations;
+      //Defensive copy
+      this.annotations = new Annotation[annotations.length];
+      System.arraycopy(annotations, 0, this.annotations, 0, annotations.length);
    }
 
    public boolean resolve(Controller controller)

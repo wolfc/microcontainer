@@ -24,6 +24,7 @@ package org.jboss.kernel.plugins.deployment.props;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.jboss.kernel.plugins.deployment.props.vertex.DefaultVertexFactory;
 import org.jboss.kernel.spi.deployment.KernelDeployment;
@@ -82,10 +83,10 @@ public class PropertiesGraphFactory
    protected static Map<String, String> toMap(Properties properties)
    {
       Map<String, String> map = new TreeMap<String, String>();
-      for(Object key : properties.keySet())
+      
+      for (Entry<Object, Object> entry : properties.entrySet())
       {
-         String ks = key.toString();
-         map.put(ks, properties.getProperty(ks));
+         map.put(entry.getKey().toString(), (String)entry.getValue());
       }
       return map;
    }
@@ -100,10 +101,9 @@ public class PropertiesGraphFactory
       graph = new Graph<String>();
       root = vertexFactory.rootVertex();
       graph.setRootVertex(root);
-      for(String key : properties.keySet())
+      for(Entry<String, String> entry : properties.entrySet())
       {
-         String value = properties.get(key);
-         buildVertices(root, 0, key, value, 0);
+         buildVertices(root, 0, entry.getKey(), entry.getValue(), 0);
       }
    }
 

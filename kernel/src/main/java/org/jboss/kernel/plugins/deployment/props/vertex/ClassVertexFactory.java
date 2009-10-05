@@ -43,7 +43,7 @@ public class ClassVertexFactory extends KeywordLevelVertexFactory
       return new ClassVertex(name);
    }
 
-   class ClassVertex extends TreeVertex<BeanVertexFactory.BeanVertex>
+   static class ClassVertex extends TreeVertex<BeanVertexFactory.BeanVertex>
    {
       public ClassVertex(String name)
       {

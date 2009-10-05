@@ -53,7 +53,7 @@ public class BeanVertexFactory extends AbstractLevelVertexFactory
     *
     * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
     */
-   class BeanVertex extends TreeVertex<BaseDeploymentVertex>
+   static class BeanVertex extends TreeVertex<BaseDeploymentVertex>
    {
       private AbstractBeanMetaData beanMetaData;
 

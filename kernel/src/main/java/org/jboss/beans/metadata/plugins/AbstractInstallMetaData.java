@@ -106,7 +106,7 @@ public class AbstractInstallMetaData extends AbstractLifecycleMetaData
       KernelControllerContext context = visitor.getControllerContext();
       if (bean != null)
       {
-         DependencyItem item = new InstallationDependencyItem(context.getName());
+         DependencyItem item = new InstallationDependencyItem(context.getName(), bean, state, dependentState);
          visitor.addDependency(item);
       }
       super.initialVisit(visitor);
@@ -155,14 +155,14 @@ public class AbstractInstallMetaData extends AbstractLifecycleMetaData
    /**
     * An InstallationDependencyItem.
     */
-   public class InstallationDependencyItem extends AbstractDependencyItem
+   public static class InstallationDependencyItem extends AbstractDependencyItem
    {
       /**
        * Create a new InstallationDependencyItem.
        * 
        * @param name the name
        */
-      public InstallationDependencyItem(Object name)
+      public InstallationDependencyItem(Object name, String bean, ControllerState state, ControllerState dependentState)
       {
          super(name, bean, state, dependentState);
       }

@@ -412,7 +412,7 @@ public class AbstractKernelController extends ScopedController implements Kernel
       }
    }
 
-   private class ClassContext
+   private static class ClassContext
    {
       private boolean used;
       private Set<KernelControllerContext> contexts;

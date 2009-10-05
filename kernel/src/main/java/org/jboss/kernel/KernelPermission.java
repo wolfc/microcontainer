@@ -164,7 +164,7 @@ public class KernelPermission extends BasicPermission
    /**
     * A KernelPermissionCollection.
     */
-   class KernelPermissionCollection extends PermissionCollection
+   static class KernelPermissionCollection extends PermissionCollection
    {
       /** The serialVersionUID */
       private static final long serialVersionUID = 3256442516797665329L;

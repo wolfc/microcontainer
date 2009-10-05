@@ -50,7 +50,9 @@ public class WBInjectionValueMetaData extends AbstractValueMetaData
    public WBInjectionValueMetaData(Class<?> type, Annotation[] annotations)
    {
       this.type = type;
-      this.annotations = annotations;
+      //Defensive copy
+      this.annotations = new Annotation[annotations.length];
+      System.arraycopy(annotations, 0, this.annotations, 0, annotations.length);
    }
 
    public void initialVisit(MetaDataVisitor visitor)

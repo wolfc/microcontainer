@@ -106,7 +106,7 @@ public class JavassistLazyInitializer extends AbstractLazyInitializer
    /**
     * Privileged class creator.
     */
-   protected class ClassCreator implements PrivilegedAction<Class<?>>
+   protected static class ClassCreator implements PrivilegedAction<Class<?>>
    {
       private ProxyFactory factory;
 

@@ -46,7 +46,7 @@ public class HolderVertexFactory extends AbstractLevelVertexFactory
    /**
     * Holder vertex.
     */
-   class HolderVertex extends TreeVertex<Vertex<String>>
+   static class HolderVertex extends TreeVertex<Vertex<String>>
    {
       public HolderVertex(String name)
       {

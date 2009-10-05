@@ -1,0 +1,338 @@
+<FindBugsFilter>
+   <!-- Message is: "instanceof will always return true in org.jboss.beans.metadata.plugins.AbstractArrayMetaData.getValue(TypeInfo, ClassLoader), 
+    since all org.jboss.reflect.spi.ClassInfo are instances of org.jboss.reflect.spi.ClassInfo" 
+    however we are checking if "typeInfo instanceof ClassInfo" and ClassInfo is a sub-interface of TypeInfo -->
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractArrayMetaData"/>
+      <Method name="getValue"/> 
+      <Bug pattern="BC_VACUOUS_INSTANCEOF"/>
+   </Match>
+   <!-- There should only be one instance of KernelLocator -->
+   <Match>
+      <Class name="org.jboss.kernel.plugins.util.KernelLocator"/>
+      <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+   </Match>
+   <!-- Null Object parameter is handled further down -->
+   <Match>
+      <Class name="org.jboss.kernel.plugins.config.Configurator"/>
+      <Method name="getConstructorJoinPoint"/> 
+      <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+   </Match>
+   <!-- Context will be an instance of KCC -->
+   <Match>
+      <Class name="org.jboss.beans.metadata.api.model.FromContextDelegate$BeanInfoFromContext"/>
+      <Method name="internalExecute"/> 
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <!-- Don't want to change the interfaces for these existing classes -->
+   <Match>
+      <Or>
+         <Class>org.jboss.beans.metadata.plugins.AbstractBeanMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractCallbackMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractCollectionMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractConstructorMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractInstallMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractLifecycleMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractListMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractMapMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractParameterMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractPropertyMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractSetMetaData</Class>
+         <Class>org.jboss.beans.metadata.plugins.AbstractTypeMetaData</Class>
+      </Or>
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <!-- Allow this safety check -->
+   <Match>
+      <Class name="org.jboss.kernel.plugins.annotations.InjectableMemberAnnotationPlugin"/>
+      <Method name="getPropertyMetaData"/> 
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <!-- These fields are intended to be set by a setter rather than in the constructor -->
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractSearchValueMetaData"/>
+      <Field name="context"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.policy.MetaDataRepositoryInstaller"/>
+      <Field name="underlyingKernel"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.kernel.plugins.dependency.JNDIKernelRegistryPlugin"/>
+      <Field name="context"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+     
+   <!--  Has an explicit equals method, the hash code method is implemented via JBossObject + getHashCode() -->
+   <Match>
+      <Or>
+         <Class name="org.jboss.beans.metadata.api.model.FromContextDelegate"/>
+         <Class name="org.jboss.beans.metadata.plugins.AbstractAliasMetaData"/>
+         <Class name="org.jboss.beans.metadata.plugins.AbstractAnnotationMetaData"/>
+         <Class name="org.jboss.beans.metadata.plugins.AbstractDemandMetaData"/>
+         <Class name="org.jboss.beans.metadata.plugins.AbstractDependencyMetaData"/>
+         <Class name="org.jboss.beans.metadata.plugins.AbstractNamedAliasMetaData"/>
+         <Class name="org.jboss.beans.metadata.plugins.AbstractRelatedClassMetaData"/>
+         <Class name="org.jboss.beans.metadata.plugins.AbstractSupplyMetaData"/>
+         <Class name="org.jboss.beans.metadata.plugins.DirectAnnotationMetaData"/>
+         <Class name="org.jboss.kernel.plugins.dependency.CallbackDependencyItem"/>
+      </Or>
+      <Bug pattern="HE_EQUALS_NO_HASHCODE" />
+   </Match>
+   
+   <!-- Don't refactor these anonymous inner classes into static inner classes. They all need external stuff -->
+   <Match>
+      <Or>
+         <Class name="~org\.jboss\.beans\.metadata\.plugins\.factory\.GenericBeanFactory\$.*"/>
+         <Class name="~org\.jboss\.kernel\.KernelPermission\$KernelPermissionCollection\$.*"/>
+         <Class name="~org\.jboss\.kernel\.plugins\.registry\.basic\.BasicKernelBus\$.*"/>
+         <Class name="~org\.jboss\.kernel\.plugins\.registry\.basic\.LifecycleAwareKernelBus\$.*"/>
+      </Or>
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+
+   <!--  Don't worry about storing externally mutable object in a field -->
+   <Match>
+      <Class name="org.jboss.kernel.plugins.bootstrap.standalone.StandaloneBootstrap"/>
+      <Field name="args"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.kernel.plugins.dependency.JNDIKernelRegistryPlugin"/>
+      <Field name="properties"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>  
+   
+   <!--  Usage of Class.getResource() is as intended, it should be using the subclasses package name -->
+   <Match>
+      <Class name="org.jboss.test.kernel.junit.MicrocontainerTest"/>
+      <Method name="deploy"/>
+      <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+   </Match>
+   
+   <Match>
+      <Class name="org.jboss.test.kernel.junit.MicrocontainerTest"/>
+      <Method name="deploy"/>
+      <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+   </Match>
+   
+   <!-- Is option -->
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractDependencyValueMetaData"/>
+      <Field name="optionalWhenRequired"/>
+      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.kernel.plugins.annotations.wb.AnnotationsMatcher"/>
+      <Bug pattern="SE_NO_SUITABLE_CONSTRUCTOR"/>
+   </Match>
+   
+   <!-- Exclude these non serializable field errors until it is clear if the metadata classes actually need to be serialized,
+      in which case there should be some tests testing that -->   
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractAnnotationMetaData"/>
+      <Field name="ann"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="aliasMetaData"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="aliases"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+            
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="demands"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="depends"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="installCallbacks"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="installs"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="properties"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="related"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="supplies"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="uninstallCallbacks"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractBeanMetaData"/>
+      <Field name="uninstalls"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractConstructorMetaData"/>
+      <Field name="parameters"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractDependencyValueMetaData"/>
+      <Field name="search"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractLazyMetaData"/>
+      <Field name="interfaces"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractLifecycleMetaData"/>
+      <Field name="parameters"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractMapMetaData"/>
+      <Field name="map"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractRelatedClassMetaData"/>
+      <Field name="enabled"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractSearchValueMetaData"/>
+      <Field name="context"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractSearchValueMetaData"/>
+      <Field name="search"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.AbstractValueFactoryMetaData"/>
+      <Field name="parameters"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.DirectAnnotationMetaData"/>
+      <Field name="annotation"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.policy.AbstractPolicyMetaData"/>
+      <Field name="annotations"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.plugins.policy.AbstractPolicyMetaData"/>
+      <Field name="bindings"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="aliases"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="annotations"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="demands"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="depends"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="installCallbacks"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="installs"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="properties"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="supplies"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="uninstallCallbacks"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData"/>
+      <Field name="uninstalls"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.kernel.plugins.annotations.wb.AnnotationsMatcher"/>
+      <Field name="annotations"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.kernel.plugins.annotations.wb.AnnotationsSupply"/>
+      <Field name="annotations"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.kernel.plugins.annotations.wb.WBInjectionValueMetaData"/>
+      <Field name="annotations"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.kernel.plugins.deployment.AbstractKernelDeployment"/>
+      <Field name="aliases"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.kernel.plugins.deployment.AbstractKernelDeployment"/>
+      <Field name="annotations"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.kernel.plugins.deployment.AbstractKernelDeployment"/>
+      <Field name="beanFactories"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+            
+   
+   
+</FindBugsFilter>

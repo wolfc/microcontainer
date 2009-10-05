@@ -42,10 +42,10 @@ import org.jboss.dependency.spi.ControllerState;
 public class KernelControllerContextActions extends AbstractControllerContextActions
 {
    /** The single instance */
-   private static KernelControllerContextActions instance;
+   private static volatile KernelControllerContextActions instance;
 
    /** Actions without instantiate */
-   private static KernelControllerContextActions noInstantiate;
+   private static volatile KernelControllerContextActions noInstantiate;
    
    /**
     * Get the instance
