@@ -104,7 +104,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
    private boolean collectStats = false;
    
    /** The install stats */
-   private StateStatistics installStats = null;
+   private volatile StateStatistics installStats = null;
    
    /**
     * Create an abstract controller
@@ -252,9 +252,12 @@ public class AbstractController extends JBossObject implements Controller, Contr
 
    public String listStateTimes(boolean details)
    {
-      if (installStats == null)
-         return "No statistics available";
-      return installStats.listTimes(details);
+      synchronized (this)
+      {
+         if (installStats == null)
+            return "No statistics available";
+         return installStats.listTimes(details);
+      }
    }
 
    public void addState(ControllerState state, ControllerState before)
@@ -586,7 +589,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
    {
       Map<ControllerState, ControllerContextAction> map = createAliasActions();
       ControllerContextActions actions = new AbstractControllerContextActions(map);
-      AliasControllerContext context = new InnerAliasControllerContext(alias, original, actions);
+      AliasControllerContext context = new InnerAliasControllerContext(alias, getId(), original, actions);
       preAliasInstall(context);
       install(context);
       // is alias in error
@@ -1886,11 +1889,11 @@ public class AbstractController extends JBossObject implements Controller, Contr
 
    // --- alias dependency
 
-   private class InnerAliasControllerContext extends AbstractAliasControllerContext
+   private static class InnerAliasControllerContext extends AbstractAliasControllerContext
    {
-      private InnerAliasControllerContext(Object alias, Object original, ControllerContextActions actions)
+      private InnerAliasControllerContext(Object alias, String id, Object original, ControllerContextActions actions)
       {
-         super(alias, getId(), original, actions);
+         super(alias, id, original, actions);
       }
    }
 

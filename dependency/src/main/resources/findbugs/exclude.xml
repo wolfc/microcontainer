@@ -1,0 +1,33 @@
+<FindBugsFilter>
+   <!--  The non-serializable Map field it complains about is a Collections.singletonMap which is serializable -->
+   <Match>
+      <Class name="org.jboss.dependency.plugins.graph.ScopeKeySearchInfo"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <!--  The underlyingController field uninitialised in the constructor is intended to be set by a setter -->
+   <Match>
+      <Class name="org.jboss.dependency.plugins.ScopedController"/>
+      <Field name="underlyingController"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <!--  Ignore dead local variable storage in the tests -->
+   <Match>
+      <Class name="~org\.jboss\.test\.dependency\.controller\.test.*"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <!--  Has an explicit equals method, the hash code method is implemented via JBossObject + getHashCode() -->
+   <Match>
+      <Class name="org.jboss.dependency.spi.Cardinality"/>
+      <Bug pattern="HE_EQUALS_NO_HASHCODE" />
+   </Match>
+   <!--  Has an explicit equals method, the hash code method is implemented via JBossObject + getHashCode() -->
+   <Match>
+      <Class name="org.jboss.dependency.spi.ControllerState"/>
+      <Bug pattern="HE_EQUALS_NO_HASHCODE" />
+   </Match>
+   <!-- We have a compareTo method, but no equals() - not relevant in this case -->
+   <Match>
+      <Class name="org.jboss.dependency.plugins.BasicStatistic"/>
+      <Bug pattern="EQ_COMPARETO_USE_OBJECT_EQUALS" />
+   </Match>
+</FindBugsFilter>

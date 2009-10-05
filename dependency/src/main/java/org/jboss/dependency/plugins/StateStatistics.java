@@ -62,7 +62,7 @@ class StateStatistics
     * @param details whether to show details
     * @return the times
     */
-   public String listTimes(boolean details)
+   public synchronized String listTimes(boolean details)
    {
       List<StateStatistic> stats = new ArrayList<StateStatistic>(states.values());
       Collections.sort(stats);
