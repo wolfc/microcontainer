@@ -1,0 +1,11 @@
+<FindBugsFilter>
+
+   <!-- hashcode comes from JBossObject/getHashCode() -->
+   <Match>
+      <Class name="org.jboss.spring.metadata.AbstractImportMetaData"/>
+      <Method name="equals" params="java.lang.Object" returns="boolean"/>
+      <Bug pattern="HE_EQUALS_NO_HASHCODE"/>
+   </Match>
+            
+
+</FindBugsFilter>

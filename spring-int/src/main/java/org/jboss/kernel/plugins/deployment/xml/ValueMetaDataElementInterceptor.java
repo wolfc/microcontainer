@@ -42,7 +42,7 @@ import org.jboss.xb.binding.sunday.unmarshalling.DefaultElementInterceptor;
 public class ValueMetaDataElementInterceptor extends DefaultElementInterceptor
 {
    /** The value handler */
-   public static ValueMetaDataElementInterceptor VALUES = new ValueMetaDataElementInterceptor();
+   public static final ValueMetaDataElementInterceptor VALUES = new ValueMetaDataElementInterceptor();
 
    public void add(Object parent, Object child, QName name)
    {
