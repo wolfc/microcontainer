@@ -1,0 +1,21 @@
+<FindBugsFilter>
+
+   <!-- We are deliberately ignoring the exception -->
+   <Match>
+      <Class name="org.jboss.guice.spi.GuiceKernelRegistryEntryPlugin"/>
+      <Method name="getEntry"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   
+   <!-- Method return value is used to enter an empty else if block; else if block is stubbed out -->
+   <Match>
+      <Class name="org.jboss.guice.plugins.GuiceListener"/>
+      <Method name="onEvent" params="org.jboss.kernel.spi.event.KernelEvent, java.lang.Object" returns="void"/>
+      <Or>
+         <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
+         <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+      </Or>
+   </Match>
+
+
+</FindBugsFilter>
