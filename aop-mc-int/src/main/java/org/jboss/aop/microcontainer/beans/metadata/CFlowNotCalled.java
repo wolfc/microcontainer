@@ -28,6 +28,8 @@ package org.jboss.aop.microcontainer.beans.metadata;
  */
 public class CFlowNotCalled extends CFlowEntry
 {
+   private static final long serialVersionUID = 1L;
+
    public boolean getCalled()
    {
       return false;

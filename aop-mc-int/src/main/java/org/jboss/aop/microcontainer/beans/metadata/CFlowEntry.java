@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop.microcontainer.beans.metadata;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAttribute;
 
 /**
@@ -28,8 +30,10 @@ import javax.xml.bind.annotation.XmlAttribute;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class CFlowEntry
+public class CFlowEntry implements Serializable
 {
+   private static final long serialVersionUID = 1L;
+   
    private String expr;
    private boolean called;
 

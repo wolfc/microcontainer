@@ -99,6 +99,10 @@ public class MicrocontainerAnnotationLoaderStrategy extends AspectAnnotationLoad
       {
          entry = new FinallyAdviceData();
       }
+      else
+      {
+         throw new IllegalStateException("Invalid advice type " + internalAdviceType);
+      }
       entry.setAdviceMethod(methodName);
       entry.setRefName(aspectDefName);
 

@@ -378,9 +378,9 @@ public class AOPDependencyBuilder extends AbstractDependencyBuilder
          return overrideMap;
       }
 
-      for (String key : overrideMap.keySet())
+      for (Entry<String, ArrayList<String>> entry : overrideMap.entrySet())
       {
-         classMap.put(key, overrideMap.get(key));
+         classMap.put(entry.getKey(), entry.getValue());
       }
       return classMap;
    }

@@ -33,6 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name="aroundAdviceType", propOrder={})
 public class AdviceData extends AdviceOrInterceptorData
 {
+   private static final long serialVersionUID = 1L;
+   
    String adviceMethod;
    
    public String getAdviceMethod()

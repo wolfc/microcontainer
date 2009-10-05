@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.jboss.aop.microcontainer.beans.IntroductionBinding;
 import org.jboss.aop.microcontainer.beans.MixinEntry;
 import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.util.id.GUID;
@@ -51,7 +50,6 @@ import org.jboss.xb.annotations.JBossXmlSchema;
 //@XmlType(name="introductionType", propOrder={"aliases", "annotations", "classLoader", "constructor", "properties", "create", "start", "depends", "demands", "supplies", "installs", "uninstalls", "installCallbacks", "uninstallCallbacks"})
 @XmlType(name="introductionType", propOrder={})
 public class IntroductionBeanMetaDataFactory extends AspectManagerAwareBeanMetaDataFactory
-   implements BeanMetaDataFactory
 {
    private static final long serialVersionUID = 1L;
 

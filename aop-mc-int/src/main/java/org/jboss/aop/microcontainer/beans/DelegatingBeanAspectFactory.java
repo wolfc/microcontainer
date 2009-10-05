@@ -182,37 +182,30 @@ public class DelegatingBeanAspectFactory implements AspectFactory, KernelControl
       public ValueMetaData getClassLoader()
       {
          ClassLoader loader = null; 
-         if (loader == null)
+         if (lookAtContext && context != null)
          {
-            if (lookAtContext && context != null)
+            try
+            {
+               loader = context.getClassLoader();
+            }
+            catch (Throwable t)
+            {
+               log.trace("Unable to retrieve classloader from " + context);
+            }
+            
+            if (loader == null)
             {
                try
                {
-                  loader = context.getClassLoader();
+                  loader = Configurator.getClassLoader(((GenericBeanFactory)factory).getClassLoader());
                }
-               catch (Throwable t)
+               catch (Throwable e)
                {
-                  log.trace("Unable to retrieve classloader from " + context);
-               }
-               
-               if (loader == null)
-               {
-                  try
-                  {
-                     loader = Configurator.getClassLoader(((GenericBeanFactory)factory).getClassLoader());
-                  }
-                  catch (Throwable e)
-                  {
-                     log.trace("Unable to retrieve classloader from " + factory);
-                  }
+                  log.trace("Unable to retrieve classloader from " + factory);
                }
             }
-            return loader != null ?  new AbstractValueMetaData(loader) : null;
          }
-         else
-         {
-            return new AbstractValueMetaData(loader);
-         }
+         return loader != null ?  new AbstractValueMetaData(loader) : null;
       }
       
    }

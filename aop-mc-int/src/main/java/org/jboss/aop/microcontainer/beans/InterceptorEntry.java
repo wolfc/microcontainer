@@ -32,7 +32,7 @@ import org.jboss.aop.advice.ScopedInterceptorFactory;
  * @author <a href="kabir.khan@jboss.com">Kabir Khan</a>
  * @version $Revision: 1.1 $
  */
-public class InterceptorEntry extends BindingEntry implements Cloneable
+public final class InterceptorEntry extends BindingEntry implements Cloneable
 {
    Aspect aspect;
    String aspectMethod;

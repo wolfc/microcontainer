@@ -283,6 +283,8 @@ public class AOPConstructorJoinpoint extends BasicConstructorJoinPoint
                      break;
                   }
                }
+               if (constructor == null)
+                  throw new IllegalStateException("Could not find constructor");
             }
             else
             {

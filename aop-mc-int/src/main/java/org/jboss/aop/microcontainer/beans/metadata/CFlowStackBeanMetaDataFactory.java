@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.jboss.aop.microcontainer.beans.CFlowStack;
 import org.jboss.aop.microcontainer.beans.CFlowStackEntry;
 import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.xb.annotations.JBossXmlSchema;
@@ -48,7 +47,6 @@ import org.jboss.xb.annotations.JBossXmlSchema;
 @XmlRootElement(name="cflow")
 @XmlType(name="cflowStackType", propOrder={"aliases", "annotations", "classLoader", "constructor", "properties", "calledEntries", "create", "start", "depends", "demands", "supplies", "installs", "uninstalls", "installCallbacks", "uninstallCallbacks"})
 public class CFlowStackBeanMetaDataFactory extends AspectManagerAwareBeanMetaDataFactory
-   implements BeanMetaDataFactory
 {
    private static final long serialVersionUID = 1L;
    

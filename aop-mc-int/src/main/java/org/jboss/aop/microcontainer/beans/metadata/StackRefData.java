@@ -33,6 +33,8 @@ import org.jboss.aop.microcontainer.beans.StackEntry;
 @XmlType(name="stackRefType", propOrder={})
 public class StackRefData extends BaseInterceptorData
 {
+   private static final long serialVersionUID = 1L;
+
    @Override
    public String getBeanClassName()
    {

@@ -33,6 +33,8 @@ import org.jboss.aop.advice.AdviceType;
 @XmlType(name="beforeAdviceType", propOrder={})
 public class BeforeAdviceData extends AdviceData
 {
+   private static final long serialVersionUID = 1L;
+
    public BeforeAdviceData()
    {
       setType(AdviceType.BEFORE);

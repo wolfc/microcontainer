@@ -33,6 +33,8 @@ import org.jboss.aop.advice.AdviceType;
 @XmlType(name="throwingAdviceType", propOrder={})
 public class ThrowingAdviceData extends AdviceData
 {
+   private static final long serialVersionUID = 1L;
+
    public ThrowingAdviceData()
    {
       setType(AdviceType.THROWING);

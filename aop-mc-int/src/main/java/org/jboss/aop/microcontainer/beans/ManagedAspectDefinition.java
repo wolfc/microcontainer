@@ -60,4 +60,18 @@ public class ManagedAspectDefinition extends AspectDefinition
    {
       return dependentAspectName;
    }
+   
+   @Override
+   public int hashCode()
+   {
+      //super class hashcode is what we want
+      return super.hashCode();
+   }
+   
+   @Override
+   public boolean equals(Object obj)
+   {
+      //super class equals is what we want
+      return super.equals(obj);
+   }
 }

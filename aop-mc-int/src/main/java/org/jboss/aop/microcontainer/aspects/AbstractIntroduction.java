@@ -75,6 +75,8 @@ public abstract class AbstractIntroduction<T extends Annotation> implements Inte
 
    public Object invoke(Invocation invocation) throws Throwable
    {
+      if (invocation instanceof MethodInvocation == false)
+         throw new IllegalStateException("Invocation is not an instance of MethodInvocation: " + invocation);
       MethodInvocation mi = (MethodInvocation) invocation;
       KernelControllerContext context = (KernelControllerContext) mi.getArguments()[0];
       String methodName = mi.getMethod().getName();

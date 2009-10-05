@@ -36,7 +36,6 @@ import org.jboss.aop.microcontainer.beans.Aspect;
 import org.jboss.aop.microcontainer.beans.ClassLoaderAwareGenericBeanFactory;
 import org.jboss.beans.metadata.plugins.AbstractDependencyValueMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
 import org.jboss.beans.metadata.spi.MetaDataVisitorNode;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
@@ -53,7 +52,6 @@ import org.w3c.dom.Element;
 @XmlRootElement(name="aspect")
 @XmlType(name="aspectType", propOrder={"aliases", "annotations", "classLoader", "constructor", "properties", "create", "start", "depends", "demands", "supplies", "installs", "uninstalls", "installCallbacks", "uninstallCallbacks"})
 public class AspectBeanMetaDataFactory extends AspectManagerAwareBeanMetaDataFactory
-   implements BeanMetaDataFactory
 {
    private static final long serialVersionUID = 1L;
 
@@ -140,6 +138,7 @@ public class AspectBeanMetaDataFactory extends AspectManagerAwareBeanMetaDataFac
          throw new RuntimeException("Wrong number of beans" + beans);
       }
       BeanMetaData factory = beans.get(0);
+      
       BeanMetaDataBuilder factoryBuilder = AOPBeanMetaDataBuilder.createBuilder(factory);
       factoryBuilder.setBean(ClassLoaderAwareGenericBeanFactory.class.getName());
       result.add(factory);
@@ -150,7 +149,7 @@ public class AspectBeanMetaDataFactory extends AspectManagerAwareBeanMetaDataFac
       aspectBuilder.addPropertyMetaData("name", aspectName);
       HashMap<String, String> attributes = new HashMap<String, String>();
       attributes.put("name", name);
-      if (factory != null)
+      if (this.factory != null)
       {
          attributes.put("factory", this.factory);
       }

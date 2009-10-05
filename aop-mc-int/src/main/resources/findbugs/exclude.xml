@@ -1,0 +1,125 @@
+<FindBugsFilter>
+
+   <!-- There will only be one instance of DefaultAspectManager so the write to static field from instance method is ok -->
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.DefaultAspectManager"/>
+      <Method name="setManagerBean"/> 
+      <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.DefaultAspectManager"/>
+      <Method name="setManagerProperty"/> 
+      <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+   </Match>
+   
+   <!-- Exception is being caught, but runtime exception is thrown -->
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.ClassMetaDataLoader"/>
+      <Method name="start"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/> 
+   </Match>
+   
+   <!--  Field is intended to be set by setter, not constructor -->
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.BindingEntry"/>
+      <Field name="manager"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+
+   <!-- We are not synchronizing factory, rather aspectFactory -->
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.DelegatingBeanAspectFactory"/>
+      <Field name="factory"/>
+      <Bug pattern="IS2_INCONSISTENT_SYNC"/>
+   </Match>
+   
+   <!-- This is only used internally  -->
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.StackEntry"/>
+      <Field name="factories"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   
+   <!-- GenericBeanAspectFactory defines getClassname(), but both must remain as they are -->
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.ClassMetaData"/>
+      <Method name="getClassName"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   
+   <!-- super class hashcode is good enough -->
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.ManagedAspectDefinition"/>
+      <Method name="getClassName"/>
+      <Bug pattern="HE_EQUALS_NO_HASHCODE"/>
+   </Match>
+
+   <!-- Redundant null check is ok, fixing this method breaks things -->
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.AspectManagerFactory"/>
+      <Method name="getAspectManager" params="org.jboss.metadata.spi.MetaData" returns="org.jboss.aop.AspectManager"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+
+   <!-- Exclude these non serializable field errors until it is clear if the metadata classes actually need to be serialized,
+      in which case there should be some tests testing that -->      
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.DelegatingBeanAspectFactory$PushedClassLoaderMetaData"/>
+      <Bug pattern="SE_BAD_FIELD_INNER_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.ArrayBindBeanMetaDataFactory"/>
+      <Field name="interceptors"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.AspectBeanMetaDataFactory"/>
+      <Field name="elements"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.BindBeanMetaDataFactory"/>
+      <Field name="interceptors"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.CFlowStackBeanMetaDataFactory"/>
+      <Field name="calledEntries"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.DomainBeanMetaDataFactory"/>
+      <Field name="childBeans"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.DynamicCflowBeanMetaDataFactory"/>
+      <Field name="elements"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.IntroductionBeanMetaDataFactory"/>
+      <Field name="mixins"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.MetaDataBeanMetaDataFactory"/>
+      <Field name="elements"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.MetaDataLoaderBeanMetaDataFactory"/>
+      <Field name="elements"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.PrecedenceBeanMetaDataFactory"/>
+      <Field name="entries"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.jboss.aop.microcontainer.beans.metadata.StackBeanMetaDataFactory"/>
+      <Field name="interceptors"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+</FindBugsFilter>

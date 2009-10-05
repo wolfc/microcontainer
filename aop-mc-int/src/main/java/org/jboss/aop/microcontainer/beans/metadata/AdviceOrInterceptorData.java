@@ -35,6 +35,8 @@ import org.jboss.aop.microcontainer.beans.InterceptorEntry;
 public abstract class AdviceOrInterceptorData extends BaseInterceptorData
 {
 
+   private static final long serialVersionUID = 1L;
+   
    AdviceType type = AdviceType.AROUND;
 
    @XmlAttribute(name = "aspect")

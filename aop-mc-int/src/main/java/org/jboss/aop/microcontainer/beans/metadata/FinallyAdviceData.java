@@ -33,6 +33,8 @@ import org.jboss.aop.advice.AdviceType;
 @XmlType(name="finallyAdviceType", propOrder={})
 public class FinallyAdviceData extends AdviceData
 {
+   private static final long serialVersionUID = 1L;
+
    public FinallyAdviceData()
    {
       setType(AdviceType.FINALLY);

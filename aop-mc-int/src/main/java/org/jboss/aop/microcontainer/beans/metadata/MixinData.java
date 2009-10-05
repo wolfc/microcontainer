@@ -21,6 +21,8 @@
 */ 
 package org.jboss.aop.microcontainer.beans.metadata;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -31,8 +33,10 @@ import javax.xml.bind.annotation.XmlType;
  * @version $Revision: 1.1 $
  */
 @XmlType(propOrder= {})
-public class MixinData
+public class MixinData implements Serializable
 {
+   private static final long serialVersionUID = 1L;
+   
    String mixin;
    boolean isTransient = true;
    String construction;

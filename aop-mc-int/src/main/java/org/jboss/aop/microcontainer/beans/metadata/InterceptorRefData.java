@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name="interceptorRefType", propOrder={})
 public class InterceptorRefData extends AdviceOrInterceptorData
 {
+   private static final long serialVersionUID = 1L;
+
    public InterceptorRefData()
    {
       super();
