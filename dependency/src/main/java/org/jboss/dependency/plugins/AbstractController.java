@@ -1410,7 +1410,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
       {
          Map<Object, Set<CallbackItem<?>>> map = (isInstallPhase ? installCallbacks : uninstallCallbacks);
          Set<CallbackItem<?>> callbacks = map.get(name);
-         return callbacks != null ? callbacks : new HashSet<CallbackItem<?>>();
+         return callbacks != null ? callbacks : Collections.<CallbackItem<?>>emptySet();
       }
       finally
       {
@@ -1483,7 +1483,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
          if (dependencyInfo != null && dependencyInfo.isAutowireCandidate())
          {
             // match callbacks by name
-            Set<CallbackItem<?>> existingCallbacks = getCallbacks(context.getName(), isInstallPhase);
+            Set<CallbackItem<?>> existingCallbacks = new HashSet<CallbackItem<?>>(); 
+            existingCallbacks.addAll(getCallbacks(context.getName(), isInstallPhase));
             // match by classes
             Collection<Class<?>> classes = getClassesImplemented(context.getTarget());
             if (classes != null && classes.isEmpty() == false)
