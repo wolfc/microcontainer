@@ -26,7 +26,6 @@ package org.jboss.test.microcontainer.beans.support;
  */
 public class AccessBean
 {
-   @SuppressWarnings("unused")
    private String priString;
    protected String protString;
    public String pubString;

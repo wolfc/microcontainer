@@ -28,7 +28,6 @@ import org.jboss.beans.metadata.api.annotations.ValueFactory;
  */
 public class ValueFactoryTester
 {
-   @SuppressWarnings("unused")
    @ValueFactory(bean = "pb1", method = "getValue", parameter = "pb1")
    private String privateBean;
    @ValueFactory(bean = "pb2", method = "getValue", parameter = "pb2")

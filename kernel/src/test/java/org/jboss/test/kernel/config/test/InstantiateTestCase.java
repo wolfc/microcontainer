@@ -425,6 +425,7 @@ public class InstantiateTestCase extends AbstractKernelConfigTest
       return instantiate(configurator, bmd);
    }
    
+   @SuppressWarnings("unchecked")
    public void testValueInstantiateFromCollection() throws Throwable
    {
       Object object = valueInstantiateFromCollection();
@@ -447,6 +448,7 @@ public class InstantiateTestCase extends AbstractKernelConfigTest
       return instantiate(configurator, bmd);
    }
    
+   @SuppressWarnings("unchecked")
    public void testValueInstantiateFromList() throws Throwable
    {
       Object object = valueInstantiateFromList();
@@ -469,6 +471,7 @@ public class InstantiateTestCase extends AbstractKernelConfigTest
       return instantiate(configurator, bmd);
    }
    
+   @SuppressWarnings("unchecked")
    public void testValueInstantiateFromSet() throws Throwable
    {
       Object object = valueInstantiateFromSet();

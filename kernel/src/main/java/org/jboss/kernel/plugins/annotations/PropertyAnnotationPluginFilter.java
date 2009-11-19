@@ -26,6 +26,7 @@ package org.jboss.kernel.plugins.annotations;
  */
 class PropertyAnnotationPluginFilter implements AnnotationPluginFilter
 {
+   @SuppressWarnings("unchecked")
    public boolean accept(MetaDataAnnotationPlugin plugin)
    {
       return (plugin instanceof PropertyAware);

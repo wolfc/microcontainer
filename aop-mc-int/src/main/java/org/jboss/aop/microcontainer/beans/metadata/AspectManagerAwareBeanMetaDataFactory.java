@@ -34,6 +34,9 @@ import org.jboss.beans.metadata.spi.factory.GenericBeanFactoryMetaData;
  */
 public abstract class AspectManagerAwareBeanMetaDataFactory extends GenericBeanFactoryMetaData
 {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -8946356687511317226L;
+
    /** Unless specified use the bean with this name as the aspect manager */
    protected final static String DEFAULT_ASPECT_MANAGER = "AspectManager";
    

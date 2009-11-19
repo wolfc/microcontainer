@@ -26,6 +26,7 @@ package org.jboss.kernel.plugins.annotations;
  */
 class MethodAnnotationPluginFilter extends PropertyAnnotationPluginFilter
 {
+   @SuppressWarnings("unchecked")
    public boolean accept(MetaDataAnnotationPlugin plugin)
    {
       // negate

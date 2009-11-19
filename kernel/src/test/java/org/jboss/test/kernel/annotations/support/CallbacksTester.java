@@ -31,7 +31,6 @@ import org.jboss.beans.metadata.api.annotations.Uninstall;
  */
 public class CallbacksTester
 {
-   @SuppressWarnings("unused")
    @Install
    @Uninstall
    private Set<TestBean> privateBeans;

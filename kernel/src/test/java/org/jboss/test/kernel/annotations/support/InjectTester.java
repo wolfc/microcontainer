@@ -28,7 +28,6 @@ import org.jboss.beans.metadata.api.annotations.Inject;
  */
 public class InjectTester
 {
-   @SuppressWarnings("unused")
    @Inject(bean = "pb1")
    private TestBean privateBean;
    @Inject(bean = "pb2")
@@ -36,7 +35,6 @@ public class InjectTester
    @Inject(bean = "pb3")
    public TestBean publicBean;
 
-   @SuppressWarnings("unused")
    @Inject
    private MyDeployer privateDeployer;
    @Inject

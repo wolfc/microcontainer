@@ -696,7 +696,6 @@ public class Configurator extends Config
     * @return true when they can be assigned
     * @throws Throwable for any error
     */
-   @SuppressWarnings("unchecked")
    public static boolean isAssignable(TypeInfoFactory tif, ClassLoader cl, String[] typeNames, TypeInfo[] typeInfos) throws Throwable
    {
       if (cl == null)

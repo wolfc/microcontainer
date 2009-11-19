@@ -32,7 +32,6 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.ConstructorInvocation;
 import org.jboss.aop.microcontainer.annotations.DisabledType;
 import org.jboss.aop.microcontainer.beans.AspectManagerFactory;
-import org.jboss.aop.microcontainer.annotations.DisabledType;
 import org.jboss.aop.proxy.container.AOPProxyFactory;
 import org.jboss.aop.proxy.container.AOPProxyFactoryParameters;
 import org.jboss.aop.proxy.container.ContainerCache;

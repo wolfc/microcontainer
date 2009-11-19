@@ -390,6 +390,7 @@ public class CollectionTestCase extends AbstractKernelConfigTest
       return (SimpleBean) instantiateAndConfigure(configurator, bmd);
    }
 
+   @SuppressWarnings("unchecked")
    public void testCollectionInjectOnObject() throws Throwable
    {
       SimpleBean bean = collectionInjectOnObject();

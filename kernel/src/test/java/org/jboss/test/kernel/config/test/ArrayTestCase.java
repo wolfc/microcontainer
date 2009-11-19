@@ -305,6 +305,7 @@ public class ArrayTestCase extends AbstractKernelConfigTest
       return (SimpleBean) instantiateAndConfigure(configurator, bmd);
    }
 
+   @SuppressWarnings("unchecked")
    public void testArrayIsInterface() throws Throwable
    {
       SimpleBean bean = arrayIsInterface();

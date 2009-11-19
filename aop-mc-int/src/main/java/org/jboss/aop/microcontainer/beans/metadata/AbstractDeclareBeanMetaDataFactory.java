@@ -39,6 +39,9 @@ import org.jboss.util.id.GUID;
  */
 public abstract class AbstractDeclareBeanMetaDataFactory extends AspectManagerAwareBeanMetaDataFactory
 {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 40496477255281807L;
+
    String expr;
    
    String message;

@@ -41,7 +41,6 @@ import org.jboss.dependency.spi.ControllerState;
  */
 public class DescribeAction extends AnnotationsAction
 {
-   @SuppressWarnings("unchecked")
    protected void installActionInternal(KernelControllerContext context) throws Throwable
    {
       BeanInfo info = context.getBeanInfo();

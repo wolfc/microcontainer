@@ -211,7 +211,6 @@ public class AbstractXMLTest extends AbstractTestCaseWithSetup
          fail("Expected " + expected + " got " + properties);
    }
    
-   @SuppressWarnings("unchecked")
    protected void assertBeanFactoryProperties(Set<String> expected, GenericBeanFactoryMetaData factory)
    {
       assertNotNull(factory);

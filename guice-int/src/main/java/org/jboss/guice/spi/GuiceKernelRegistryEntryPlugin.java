@@ -49,6 +49,7 @@ public class GuiceKernelRegistryEntryPlugin implements KernelRegistryPlugin
       injector = null;
    }
 
+   @SuppressWarnings("unchecked")
    public KernelRegistryEntry getEntry(Object name)
    {
       KernelRegistryEntry entry = null;

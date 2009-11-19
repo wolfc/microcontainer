@@ -164,7 +164,6 @@ public class AbstractBuilderTest extends AbstractTestCaseWithSetup
       return longName;
    }
 
-   @SuppressWarnings("unchecked")
    protected TermBinding assertSingleSequence(TermBinding term)
    {
       assertNotNull(term);

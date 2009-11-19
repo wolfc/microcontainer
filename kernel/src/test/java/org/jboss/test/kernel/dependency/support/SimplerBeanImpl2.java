@@ -32,7 +32,6 @@ public class SimplerBeanImpl2 implements Serializable, SimplerBean
 {
    private static final long serialVersionUID = 3258132440433243443L;
 
-   @SuppressWarnings("unused")
    private String string;
 
    public String getString()

@@ -956,7 +956,6 @@ public abstract class BeanMetaDataBuilder
     * 
     * @see BeanMetaData#getInstalls()
     * @param methodName the name of the method to be called upon install
-    * @param methodName the method name
     * @param types the parameter types
     * @param values the parameter values
     * @return this builder
@@ -1298,7 +1297,6 @@ public abstract class BeanMetaDataBuilder
     * 
     * @see BeanMetaData#getUninstalls()
     * @param methodName the name of the method to be called upon uninstall
-    * @param methodName the method name
     * @param types the parameter types
     * @param values the parameter values
     * @return this builder

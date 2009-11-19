@@ -159,7 +159,6 @@ abstract class FromContextDelegate extends JBossObject implements Serializable
     * @return lookup value
     * @throws Throwable for any error
     */
-   @SuppressWarnings("unchecked")
    public Object executeLookup(ControllerContext context) throws Throwable
    {
       validate(context);
@@ -185,7 +184,6 @@ abstract class FromContextDelegate extends JBossObject implements Serializable
       return fromString;
    }
 
-   @SuppressWarnings("unchecked")
    public boolean equals(Object object)
    {
       if (object == null || object instanceof FromContextDelegate == false)

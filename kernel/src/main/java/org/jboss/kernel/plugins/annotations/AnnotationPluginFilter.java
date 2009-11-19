@@ -34,5 +34,6 @@ interface AnnotationPluginFilter
     * @param plugin the current plugin
     * @return true if we match the plugin, false otherwise
     */
+   @SuppressWarnings("unchecked")
    boolean accept(MetaDataAnnotationPlugin plugin);
 }

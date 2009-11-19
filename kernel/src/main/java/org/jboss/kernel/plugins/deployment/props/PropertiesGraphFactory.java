@@ -116,7 +116,6 @@ public class PropertiesGraphFactory
     * @param value the value
     * @param level current level
     */
-   @SuppressWarnings("unchecked")
    protected void buildVertices(Vertex<String> previous, int index, String key, String value, int level)
    {
       int p = key.indexOf('.', index + 1);

@@ -179,6 +179,7 @@ public abstract class CompositeKey<T, U>
          this.key = key;
       }
 
+      @SuppressWarnings("unused")
       public CompositeKey<T, U> getKey()
       {
          return key;

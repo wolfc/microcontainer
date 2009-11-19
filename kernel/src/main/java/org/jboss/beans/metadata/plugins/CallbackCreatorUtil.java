@@ -108,7 +108,7 @@ public class CallbackCreatorUtil
     * @param cardinality cardinality
     * @return callback item
     */
-   @SuppressWarnings({"unchecked", "deprecation"})
+   @SuppressWarnings({"deprecation"})
    public static CallbackItem<Class<?>> createCallback(
          KernelControllerContext context,
          AttributeInfo ai,

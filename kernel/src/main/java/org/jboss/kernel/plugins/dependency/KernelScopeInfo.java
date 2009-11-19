@@ -79,6 +79,7 @@ public class KernelScopeInfo extends AbstractScopeInfo
    }
 
    @Override
+   @SuppressWarnings("unchecked")
    public ScopeKey getScope()
    {
       // THIS IS A HACK - the scope originally gets initialise with a class name, we fix it to have the class

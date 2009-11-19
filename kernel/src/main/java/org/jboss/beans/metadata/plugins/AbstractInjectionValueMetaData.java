@@ -160,7 +160,7 @@ public class AbstractInjectionValueMetaData extends AbstractDependencyValueMetaD
       return InjectOption.OPTIONAL.equals(injectionOption);
    }
 
-   @SuppressWarnings({"unchecked", "deprecation"})
+   @SuppressWarnings({"deprecation"})
    public Object getValue(TypeInfo info, ClassLoader cl) throws Throwable
    {
       // controller context property injection

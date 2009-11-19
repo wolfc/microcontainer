@@ -107,6 +107,7 @@ public class AbstractKernelController extends ScopedController implements Kernel
       return context;
    }
 
+   @SuppressWarnings("unchecked")
    public KernelRegistryEntry getEntry(Object name)
    {
       List<KernelControllerContext> list;
