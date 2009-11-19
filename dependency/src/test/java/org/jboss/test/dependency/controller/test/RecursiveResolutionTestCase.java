@@ -69,8 +69,6 @@ public class RecursiveResolutionTestCase extends AbstractDependencyTest
       ctx2dependencies.addIDependOn(new RecursiveDependencyItem("2", "1", ControllerState.INSTALLED, ControllerState.INSTALLED));
       assertInstall(ctx2, ControllerState.NOT_INSTALLED);
       
-      enableTrace("org.jboss.dependency");
-      
       assertChange(ctx2, ControllerState.INSTALLED);
       assertContext(ctx1, ControllerState.INSTALLED);
    }
