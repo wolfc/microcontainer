@@ -360,7 +360,7 @@ public class AbstractValueFactoryMetaData extends AbstractValueMetaData implemen
    public AbstractValueFactoryMetaData clone()
    {
       AbstractValueFactoryMetaData clone = (AbstractValueFactoryMetaData)super.clone();
-      clone.setParameters(CloneUtil.cloneCollection(parameters, ArrayList.class, ParameterMetaData.class));
+      clone.setParameters(CloneUtil.cloneList(parameters, ArrayList.class, ParameterMetaData.class));
       return clone;
    }
 }

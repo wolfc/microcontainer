@@ -324,6 +324,6 @@ public class AbstractConstructorMetaData extends AbstractFeatureMetaData
       super.doClone(clone);
       clone.setFactory(CloneUtil.cloneObject(factory, ValueMetaData.class));
       clone.setValue(CloneUtil.cloneObject(value, ValueMetaData.class));
-      clone.setParameters(CloneUtil.cloneCollection(parameters, ArrayList.class, ParameterMetaData.class));
+      clone.setParameters(CloneUtil.cloneList(parameters, ArrayList.class, ParameterMetaData.class));
    }
 }

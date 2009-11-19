@@ -226,7 +226,7 @@ public class AbstractLifecycleMetaData extends AbstractFeatureMetaData
       super.doClone(clone);
       clone.setIgnored(ignored);
       clone.setMethodName(methodName);
-      clone.setParameters(CloneUtil.cloneCollection(parameters, ArrayList.class, ParameterMetaData.class));
+      clone.setParameters(CloneUtil.cloneList(parameters, ArrayList.class, ParameterMetaData.class));
       clone.setState(state);
       clone.setType(type);
    }

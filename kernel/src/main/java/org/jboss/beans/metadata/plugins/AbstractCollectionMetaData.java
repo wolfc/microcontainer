@@ -253,7 +253,7 @@ public class AbstractCollectionMetaData extends AbstractTypeMetaData
    public AbstractCollectionMetaData clone()
    {
       AbstractCollectionMetaData clone = (AbstractCollectionMetaData)super.clone();
-      clone.collection = CloneUtil.cloneCollection(collection, ArrayList.class, MetaDataVisitorNode.class);
+      clone.collection = (ArrayList) CloneUtil.cloneList(collection, ArrayList.class, MetaDataVisitorNode.class);
       return clone;
    }
 }

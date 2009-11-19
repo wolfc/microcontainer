@@ -21,11 +21,16 @@
 */
 package org.jboss.beans.metadata.plugins;
 
+import static org.jboss.beans.metadata.plugins.CloneUtil.cloneList;
+import static org.jboss.beans.metadata.plugins.CloneUtil.cloneObject;
+import static org.jboss.beans.metadata.plugins.CloneUtil.cloneSet;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,8 +39,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.jboss.beans.info.spi.BeanAccessMode;
 import org.jboss.beans.metadata.api.model.AutowireType;
-import static org.jboss.beans.metadata.plugins.CloneUtil.cloneCollection;
-import static org.jboss.beans.metadata.plugins.CloneUtil.cloneObject;
 import org.jboss.beans.metadata.spi.AliasMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
@@ -49,8 +52,8 @@ import org.jboss.beans.metadata.spi.LifecycleMetaData;
 import org.jboss.beans.metadata.spi.MetaDataVisitor;
 import org.jboss.beans.metadata.spi.MetaDataVisitorNode;
 import org.jboss.beans.metadata.spi.PropertyMetaData;
-import org.jboss.beans.metadata.spi.SupplyMetaData;
 import org.jboss.beans.metadata.spi.RelatedClassMetaData;
+import org.jboss.beans.metadata.spi.SupplyMetaData;
 import org.jboss.dependency.plugins.AbstractDependencyItem;
 import org.jboss.dependency.spi.Controller;
 import org.jboss.dependency.spi.ControllerContext;
@@ -751,7 +754,7 @@ public class AbstractBeanMetaData extends AbstractFeatureMetaData
       return name;
    }
 
-   @SuppressWarnings({"unchecked", "deprecation"})
+   @SuppressWarnings({"deprecation"})
    public Object getValue(TypeInfo info, ClassLoader cl) throws Throwable
    {
       if (context == null)
@@ -864,21 +867,21 @@ public class AbstractBeanMetaData extends AbstractFeatureMetaData
       super.doClone(clone);
       if (aliases != null)
          clone.setAliases(new HashSet<Object>(aliases));
-      clone.setAliasMetaData(cloneCollection(aliasMetaData, HashSet.class, AliasMetaData.class));
-      clone.setRelated(cloneCollection(related, HashSet.class, RelatedClassMetaData.class));
+      clone.setAliasMetaData(cloneSet(aliasMetaData, HashSet.class, AliasMetaData.class));
+      clone.setRelated(cloneSet(related, HashSet.class, RelatedClassMetaData.class));
       clone.setClassLoader(cloneObject(classLoader, ClassLoaderMetaData.class));
       clone.setConstructor(cloneObject(constructor, ConstructorMetaData.class));
       clone.setCreate(cloneObject(create, LifecycleMetaData.class));
-      clone.setDemands(cloneCollection(demands, HashSet.class, DemandMetaData.class));
-      clone.setDepends(cloneCollection(depends, HashSet.class, DependencyMetaData.class));
+      clone.setDemands(cloneSet(demands, HashSet.class, DemandMetaData.class));
+      clone.setDepends(cloneSet(depends, HashSet.class, DependencyMetaData.class));
       clone.setDestroy(cloneObject(destroy, LifecycleMetaData.class));
-      clone.setInstallCallbacks(cloneCollection(installCallbacks, ArrayList.class, CallbackMetaData.class));
-      clone.setInstalls(cloneCollection(installs, ArrayList.class, InstallMetaData.class));
-      clone.setProperties(cloneCollection(properties, HashSet.class, PropertyMetaData.class));
+      clone.setInstallCallbacks(cloneList(installCallbacks, ArrayList.class, CallbackMetaData.class));
+      clone.setInstalls(cloneList(installs, ArrayList.class, InstallMetaData.class));
+      clone.setProperties(cloneSet(properties, HashSet.class, PropertyMetaData.class));
       clone.setStart(cloneObject(start, LifecycleMetaData.class));
       clone.setStop(cloneObject(stop, LifecycleMetaData.class));
-      clone.setSupplies(cloneCollection(supplies, HashSet.class, SupplyMetaData.class));
-      clone.setUninstallCallbacks(cloneCollection(uninstallCallbacks, ArrayList.class, CallbackMetaData.class));
-      clone.setUninstalls(cloneCollection(uninstalls, ArrayList.class, InstallMetaData.class));
+      clone.setSupplies(cloneSet(supplies, HashSet.class, SupplyMetaData.class));
+      clone.setUninstallCallbacks(cloneList(uninstallCallbacks, ArrayList.class, CallbackMetaData.class));
+      clone.setUninstalls(cloneList(uninstalls, ArrayList.class, InstallMetaData.class));
    }
 }

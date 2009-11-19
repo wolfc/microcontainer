@@ -146,6 +146,7 @@ public class AbstractDependencyMetaData extends JBossObject
        * Create a new LifecycleDependencyItem.
        * 
        * @param name the name
+       * @param dependency the dependency's name
        * @param state the state
        */
       public LifecycleDependencyItem(Object name, Object dependency, ControllerState state)

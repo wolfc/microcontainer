@@ -161,6 +161,9 @@ public class AbstractInstallMetaData extends AbstractLifecycleMetaData
        * Create a new InstallationDependencyItem.
        * 
        * @param name the name
+       * @param bean the bean class
+       * @param state the state of the bean
+       * @param dependentState the state of the dependency
        */
       public InstallationDependencyItem(Object name, String bean, ControllerState state, ControllerState dependentState)
       {

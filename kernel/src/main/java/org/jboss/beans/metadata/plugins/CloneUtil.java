@@ -23,7 +23,9 @@ package org.jboss.beans.metadata.plugins;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.beans.metadata.spi.MetaDataVisitorNode;
 
@@ -66,6 +68,64 @@ class CloneUtil
     * @return cloned collection
     */
    public static <U extends MetaDataVisitorNode, T extends Collection<U>> T cloneCollection(T collection, Class<? extends T> expectedClass, Class<U> componentType)
+   {
+      if (collection == null)
+         return null;
+
+      try
+      {
+         T clone = expectedClass.newInstance();
+         for (U item : collection)
+               clone.add(cloneObject(item, componentType));
+
+         return clone;
+      }
+      catch (Throwable t)
+      {
+         throw new RuntimeException(t);
+      }
+   }
+
+   /**
+    * Simple set clone.
+    *
+    * @param <T> the collection type
+    * @param <U> the component type
+    * @param collection the set to be cloned
+    * @param expectedClass expected set class
+    * @param componentType expected component class
+    * @return cloned collection
+    */
+   public static <U extends MetaDataVisitorNode, T extends Set<U>> T cloneSet(T collection, Class<? extends T> expectedClass, Class<U> componentType)
+   {
+      if (collection == null)
+         return null;
+
+      try
+      {
+         T clone = expectedClass.newInstance();
+         for (U item : collection)
+               clone.add(cloneObject(item, componentType));
+
+         return clone;
+      }
+      catch (Throwable t)
+      {
+         throw new RuntimeException(t);
+      }
+   }
+
+   /**
+    * Simple set clone.
+    *
+    * @param <T> the collection type
+    * @param <U> the component type
+    * @param collection the list to be cloned
+    * @param expectedClass expected set class
+    * @param componentType expected component class
+    * @return cloned collection
+    */
+   public static <U extends MetaDataVisitorNode, T extends List<U>> T cloneList(T collection, Class<? extends T> expectedClass, Class<U> componentType)
    {
       if (collection == null)
          return null;
