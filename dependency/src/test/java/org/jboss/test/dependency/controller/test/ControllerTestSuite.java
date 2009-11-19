@@ -62,6 +62,7 @@ public class ControllerTestSuite extends TestSuite
       suite.addTest(SelfDependencyTestCase.suite());
       suite.addTest(ShutdownControllerTestCase.suite());
       suite.addTest(StateConsistencyUnitTestCase.suite());
+      suite.addTest(RecursiveResolutionTestCase.suite());
 
       return suite;
    }

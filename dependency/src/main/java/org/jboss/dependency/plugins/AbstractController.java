@@ -84,7 +84,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
    /** The error contexts Map<Name, ControllerContext> */
    private Map<Object, ControllerContext> errorContexts = new ConcurrentHashMap<Object, ControllerContext>();
 
-   /** The contexts that are currently being installed */
+   /** The contexts that are currently being resolved/installed */
    private Set<ControllerContext> installing = new CopyOnWriteArraySet<ControllerContext>();
 
    /** The parent controller */
@@ -1040,7 +1040,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
    {
       boolean resolutions = false;
       Set<ControllerContext> unresolved = contextsByState.get(fromState);
-      Set<ControllerContext> resolved = resolveContexts(unresolved, toState, trace);
+      Set<ControllerContext> resolved = resolveContexts(unresolved, fromState, toState, trace);
       if (resolved.isEmpty() == false)
       {
          Set<ControllerContext> toProcess = new HashSet<ControllerContext>();
@@ -1051,11 +1051,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
             {
                if (trace)
                   log.trace("Skipping already installed " + name + " for " + toState.getStateString());
-            }
-            else if (installing.add(context) == false)
-            {
-               if (trace)
-                  log.trace("Already installing " + name + " for " + toState.getStateString());
+               installing.remove(context);
             }
             else
             {
@@ -1110,7 +1106,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
             }
          }
       }
-
+      
       return resolutions;
    }
 
@@ -1120,11 +1116,12 @@ public class AbstractController extends JBossObject implements Controller, Contr
     * This method must be invoked with the write lock taken
     *
     * @param contexts the contexts
-    * @param state    the state
+    * @param fromState the from state
+    * @param toState   the to state
     * @param trace    whether trace is enabled
     * @return the set of resolved contexts
     */
-   protected Set<ControllerContext> resolveContexts(Set<ControllerContext> contexts, ControllerState state, boolean trace)
+   protected Set<ControllerContext> resolveContexts(Set<ControllerContext> contexts, ControllerState fromState, ControllerState toState, boolean trace)
    {
       HashSet<ControllerContext> result = new HashSet<ControllerContext>();
 
@@ -1132,21 +1129,39 @@ public class AbstractController extends JBossObject implements Controller, Contr
       {
          for (ControllerContext ctx : contexts)
          {
-            if (advance(ctx))
+            Object name = ctx.getName();
+            if (fromState.equals(ctx.getState()) == false)
+            {
+               if (trace)
+                  log.trace("Skipping already installed " + name + " for " + toState.getStateString());
+            }
+            else if (installing.add(ctx) == false)
+            {
+               if (trace)
+                  log.trace("Already installing " + name + " for " + toState.getStateString());
+            }
+            else if (advance(ctx))
             {
                DependencyInfo dependencies = ctx.getDependencyInfo();
                try
                {
-                  if (dependencies == null || dependencies.resolveDependencies(this, state))
+                  if (dependencies == null || dependencies.resolveDependencies(this, toState))
                      result.add(ctx);
+                  else
+                     installing.remove(ctx);
                }
                catch (Throwable error)
                {
-                  log.error("Error resolving dependencies for " + state.getStateString() + ": " + ctx.toShortString(), error);
+                  installing.remove(ctx);
+                  log.error("Error resolving dependencies for " + toState.getStateString() + ": " + ctx.toShortString(), error);
                   uninstallContext(ctx, ControllerState.NOT_INSTALLED, trace);
                   errorContexts.put(ctx.getName(), ctx);
                   ctx.setError(error);
                }
+            }
+            else
+            {
+               installing.remove(ctx);
             }
          }
       }
