@@ -101,9 +101,9 @@ public abstract class AbstractFeatureMetaData extends JBossObject
       visitor.initialVisit(this);
    }
 
-   public void describeVisit(MetaDataVisitor vistor)
+   public void describeVisit(MetaDataVisitor visitor)
    {
-      vistor.describeVisit(this);
+      visitor.describeVisit(this);
    }
 
    protected TypeInfo applyCollectionOrMapCheck(TypeInfo typeInfo) throws Throwable

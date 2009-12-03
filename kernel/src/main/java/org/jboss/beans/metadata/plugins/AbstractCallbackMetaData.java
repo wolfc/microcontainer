@@ -160,12 +160,12 @@ public abstract class AbstractCallbackMetaData extends AbstractLifecycleMetaData
     */
    protected abstract void addCallback(MetaDataVisitor visitor, CallbackItem<?> callback);
 
-   public void describeVisit(MetaDataVisitor vistor)
+   public void describeVisit(MetaDataVisitor visitor)
    {
       ControllerState whenRequired = getState();
       try
       {
-         KernelControllerContext context = vistor.getControllerContext();
+         KernelControllerContext context = visitor.getControllerContext();
          CallbackItem<?> callback;
          if (property != null)
          {
@@ -186,19 +186,19 @@ public abstract class AbstractCallbackMetaData extends AbstractLifecycleMetaData
             throw new IllegalArgumentException("Illegal usage - not property or method:" + this);
 
          // add callback
-         addCallback(vistor, callback);
+         addCallback(visitor, callback);
 
          // demand name is Class in this case
          if (cardinality != null)
          {
-            vistor.addDependency(new CallbackDependencyItem(context.getName(), (Class<?>)callback.getIDependOn(), whenRequired, dependentState, cardinality));
+            visitor.addDependency(new CallbackDependencyItem(context.getName(), (Class<?>)callback.getIDependOn(), whenRequired, dependentState, cardinality));
          }
       }
       catch (Throwable t)
       {
          throw new Error(t);
       }
-      super.describeVisit(vistor);
+      super.describeVisit(visitor);
    }
 
    public void toString(JBossStringBuilder buffer)

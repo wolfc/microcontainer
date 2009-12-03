@@ -288,6 +288,13 @@ public class AbstractPropertyMetaData extends AbstractFeatureMetaData
       super.initialVisit(visitor);
    }
 
+   @Override
+   public void describeVisit(MetaDataVisitor visitor)
+   {
+      visitor.setContextState(ControllerState.CONFIGURED);
+      super.describeVisit(visitor);
+   }
+
    public void addChildren(Set<MetaDataVisitorNode> children)
    {
       if (value != null)

@@ -22,8 +22,9 @@
 package org.jboss.test.kernel.inject.test;
 
 import junit.framework.Test;
+
+import org.jboss.dependency.spi.ControllerContext;
 import org.jboss.dependency.spi.ControllerState;
-import org.jboss.test.kernel.inject.support.PropertyInjectTestObject;
 
 /**
  * Multiple injection - should 'fail'.
@@ -49,8 +50,8 @@ public class MultipleContextualInjectionTestCase extends SingleContextualInjecti
 
    protected void checkInjection()
    {
-      PropertyInjectTestObject test = (PropertyInjectTestObject) getBean("testObject", ControllerState.DESCRIBED);
-      assertNull(test);
+      ControllerContext context = getControllerContext("testObject", null);
+      assertEquals(ControllerState.INSTANTIATED, context.getState());
    }
 
    protected void validate() throws Exception
