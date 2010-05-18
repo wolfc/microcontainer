@@ -401,6 +401,8 @@ public class AbstractKernelController extends ScopedController implements Kernel
                log.trace("Removing contex " + context + " to class: " + clazz);
             }
             classContext.contexts.remove(context);
+            if (classContext.contexts.isEmpty())
+               contextsByClass.remove(clazz);
          }
       }
       // traverse superclass
