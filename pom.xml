@@ -31,12 +31,11 @@
   </modules>
 
   <properties>
-    <version.jboss.common.core>2.2.14.GA</version.jboss.common.core>
+    <version.jboss.common.core>2.2.17.GA</version.jboss.common.core>
     <version.jboss.logging.spi>2.0.5.GA</version.jboss.logging.spi>
     <version.jboss.logging.log4j>2.0.5.GA</version.jboss.logging.log4j>
     <version.jbossxb>2.0.1.GA</version.jbossxb>
-    <version.jboss.man>2.1.1.CR1</version.jboss.man>
-    <version.jboss.vfs>2.1.3.SP1</version.jboss.vfs>
+    <version.jboss.man>2.1.1.SP2</version.jboss.man>
     <version.javassist>3.10.0.GA</version.javassist>
     <version.jboss.aop>2.1.0.CR3</version.jboss.aop>
     <version.org.jboss.reflect>2.0.3-SNAPSHOT</version.org.jboss.reflect>
@@ -237,18 +236,6 @@
         <groupId>org.jboss</groupId>
         <artifactId>jboss-mdr</artifactId>
         <version>${version.org.jboss.mdr}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss</groupId>
-        <artifactId>jboss-vfs</artifactId>
-        <version>${version.jboss.vfs}</version>
-         <!-- FIXME http://www.jboss.com/index.html?module=bb&op=viewtopic&p=4077827#4077827 -->
-         <exclusions>
-           <exclusion>
-             <groupId>org.jboss</groupId>
-             <artifactId>jboss-common-core</artifactId>
-           </exclusion>
-         </exclusions>
       </dependency>
       <dependency>
         <groupId>javassist</groupId>
