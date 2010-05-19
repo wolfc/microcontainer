@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>4</version>
+    <version>5</version>
   </parent>
   <groupId>org.jboss.microcontainer</groupId>
   <artifactId>jboss-microcontainer</artifactId>
@@ -31,6 +31,10 @@
   </modules>
 
   <properties>
+    <!-- Minimum JDK enforced by the jboss-parent pom -->
+    <jdk.min.version>1.5</jdk.min.version>
+    
+    <!-- Dependency versions -->
     <version.jboss.common.core>2.2.17.GA</version.jboss.common.core>
     <version.jboss.logging.spi>2.0.5.GA</version.jboss.logging.spi>
     <version.jboss.logging.log4j>2.0.5.GA</version.jboss.logging.log4j>
@@ -54,31 +58,6 @@
     <testOutputDirectory>${microcontainer.testOutputDirectory}</testOutputDirectory>
     <finalName>${artifactId}</finalName>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0-alpha-3</version>
-        <executions>
-          <execution>
-            <id>enforce-versions</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <phase>validate</phase>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>2.0.9</version>
-                </requireMavenVersion>
-                <requireJavaVersion>
-                  <version>1.5.0</version>
-                </requireJavaVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-        <inherited>true</inherited>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
