@@ -42,7 +42,7 @@
     <version.jboss.man>2.1.1.SP2</version.jboss.man>
     <version.javassist>3.10.0.GA</version.javassist>
     <version.jboss.aop>2.1.0.CR3</version.jboss.aop>
-    <version.org.jboss.reflect>2.0.3-SNAPSHOT</version.org.jboss.reflect>
+    <version.org.jboss.reflect>2.0.3.GA</version.org.jboss.reflect>
     <version.org.jboss.mdr>2.0.2.GA</version.org.jboss.mdr>
     <version.org.jboss.test>1.1.1.GA</version.org.jboss.test>
     <version.junit>4.4</version.junit>
