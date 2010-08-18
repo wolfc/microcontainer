@@ -100,7 +100,7 @@ public final class InterceptorEntry extends BindingEntry implements Cloneable
          throw new IllegalArgumentException("Null aspect");
       }
       interceptorFactory = (aspectMethod == null) ? 
-            new ScopedInterceptorFactory(aspect.getDefinition()) : new AdviceFactory(aspect.getDefinition(), aspectMethod);
+            new ScopedInterceptorFactory(aspect.getDefinition()) : new AdviceFactory(aspect.getDefinition(), aspectMethod, type);
             
       manager.addInterceptorFactory(name, interceptorFactory);
       if (binding != null)
@@ -126,6 +126,8 @@ public final class InterceptorEntry extends BindingEntry implements Cloneable
       entry.binding = binding;
       entry.aspect = aspect;
       entry.aspectMethod = aspectMethod;
+      entry.forStack = forStack;
+      entry.type = type;
       return entry;
    }
 }

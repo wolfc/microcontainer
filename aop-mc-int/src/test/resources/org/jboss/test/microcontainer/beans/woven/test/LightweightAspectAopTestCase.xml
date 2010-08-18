@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<aop xmlns="urn:jboss:aop-beans:1.0">
+
+   <bean name="AspectManager" class="org.jboss.aop.AspectManager">
+      <constructor factoryClass="org.jboss.aop.AspectManager" factoryMethod="instance"/>
+   </bean>
+
+   <aspect class="org.jboss.test.microcontainer.beans.LightweightAspect"/>
+
+   <bind pointcut="execution(* org.jboss.test.microcontainer.beans.LightweightAspectPOJO->method(..))">
+      <before aspect="org.jboss.test.microcontainer.beans.LightweightAspect" name="before"/>
+      <after aspect="org.jboss.test.microcontainer.beans.LightweightAspect" name="after"/>
+      <throwing aspect="org.jboss.test.microcontainer.beans.LightweightAspect" name="throwing"/>
+      <finally aspect="org.jboss.test.microcontainer.beans.LightweightAspect" name="finaly"/>
+   </bind>
+</aop>
