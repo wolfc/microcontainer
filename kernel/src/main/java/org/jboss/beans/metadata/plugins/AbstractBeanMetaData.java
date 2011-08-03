@@ -162,6 +162,9 @@ public class AbstractBeanMetaData extends AbstractFeatureMetaData
    /** The uninstall callback List<InstallMetaData> */
    protected List<CallbackMetaData> uninstallCallbacks;
 
+   /** The nested beans list */
+   protected transient List<BeanMetaData> beans;
+
    /** The context */
    protected transient ControllerContext context;
 
@@ -194,11 +197,15 @@ public class AbstractBeanMetaData extends AbstractFeatureMetaData
       this.bean = bean;
    }
 
-   public List<BeanMetaData> getBeans()
-   {
-      NestedBeanHandler handler = createNestedBeanHandler();
-      return handler.checkForNestedBeans();
-   }
+    public List<BeanMetaData> getBeans()
+    {
+       if (beans == null)
+       {
+          NestedBeanHandler handler = createNestedBeanHandler();
+          beans = handler.checkForNestedBeans();
+       }
+       return beans;
+    }
 
    /**
     * Create nested bean handler.
