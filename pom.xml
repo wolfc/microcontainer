@@ -96,6 +96,31 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.0</version>
+          <configuration>
+            <rules>
+              <bannedDependencies>
+                <searchTransitive>true</searchTransitive>
+                <excludes>
+                  <exclude>apache-log4j:log4j</exclude>
+                </excludes>
+              </bannedDependencies>
+              <dependencyConvergence/>
+            </rules>
+            <fail>true</fail>
+          </configuration>
+          <executions>
+            <execution>
+              <id>run-enforce</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-idea-plugin</artifactId>
           <version>2.2</version>
           <configuration>
