@@ -47,12 +47,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.jboss.test</groupId>
-        <artifactId>jboss-test</artifactId>
-        <version>${version.org.jboss.test}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${version.junit}</version>
@@ -86,6 +80,7 @@
       <groupId>org.jboss.test</groupId>
       <artifactId>jboss-test</artifactId>
       <optional>true</optional>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
