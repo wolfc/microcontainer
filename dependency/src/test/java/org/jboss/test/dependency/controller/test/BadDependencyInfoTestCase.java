@@ -119,6 +119,7 @@ public class BadDependencyInfoTestCase extends AbstractDependencyTest
          {
             for(ControllerState whenRequired : getStateModel())
             {
+               System.err.println(i + ", " + method + ", " + whenRequired);
                ControllerContext context = createControllerContext(method.getName());
                DependencyInfo info = context.getDependencyInfo();
                info.addDependsOnMe(ProxyDependencyItem.createDependencyInfo(method, i, whenRequired));
@@ -133,7 +134,7 @@ public class BadDependencyInfoTestCase extends AbstractDependencyTest
                ControllerState state = context.getState();
                assertTrue(context.getName().toString(), ControllerState.ERROR.equals(state) || ControllerState.INSTALLED.equals(state));
                if (ControllerState.INSTALLED.equals(state))
-                  assertEquals(ControllerState.INSTALLED, bean.getState());
+                  assertEquals(bean.toString(), ControllerState.INSTALLED, bean.getState());
                else
                   assertEquals(previous, bean.getState());                  
                uninstall(context);

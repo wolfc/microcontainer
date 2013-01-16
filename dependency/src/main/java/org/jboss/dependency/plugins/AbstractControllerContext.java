@@ -26,6 +26,7 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jboss.dependency.spi.Controller;
 import org.jboss.dependency.spi.ControllerContext;
@@ -81,6 +82,9 @@ public class AbstractControllerContext extends JBossObject implements Controller
    
    /** Any error */
    private Throwable error;
+
+   /** The lock */
+   private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
    /**
     * Create a new AbstractControllerContext.
@@ -343,6 +347,7 @@ public class AbstractControllerContext extends JBossObject implements Controller
 
    public void install(ControllerState fromState, ControllerState toState) throws Throwable
    {
+      assert lock.isWriteLockedByCurrentThread() : lock.toString();
       this.error = null;
       flushJBossObjectCache();
       actions.install(this, fromState, toState);
@@ -422,5 +427,21 @@ public class AbstractControllerContext extends JBossObject implements Controller
    protected Object needsAnAlias(Object original)
    {
       return JMXObjectNameFix.needsAnAlias(original);
+   }
+
+   /**
+    * Lock for write
+    */
+   boolean tryLockWrite()
+   {
+      return lock.writeLock().tryLock();
+   }
+
+   /**
+    * Unlock for write
+    */
+   void unlockWrite()
+   {
+      lock.writeLock().unlock();
    }
 }

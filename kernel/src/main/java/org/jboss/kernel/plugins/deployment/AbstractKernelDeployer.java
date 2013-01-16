@@ -23,13 +23,12 @@ package org.jboss.kernel.plugins.deployment;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.*;
 
+import org.jboss.beach.util.concurrent.MarkedExecutorService;
 import org.jboss.beans.metadata.spi.BeanMetaData;
+import org.jboss.dependency.internal.TCCLExecutorService;
 import org.jboss.dependency.spi.ControllerContext;
 import org.jboss.dependency.spi.ControllerMode;
 import org.jboss.dependency.spi.ControllerState;
@@ -67,7 +66,11 @@ public class AbstractKernelDeployer
    
    /** The mode */
    protected ControllerMode mode;
-   
+
+   //protected final ExecutorService executor = new MarkedExecutorService(Executors.newFixedThreadPool(4));
+   protected final ExecutorService executor = new TCCLExecutorService(new ThreadPoolExecutor(4, 4, 30, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy()));
+   //protected final ExecutorService executor = new DummyExecutorService();
+
    /**
     * Create a new kernel deployer
     * 
@@ -287,15 +290,52 @@ public class AbstractKernelDeployer
     * @param deployment the deployment
     * @throws Throwable for any error
     */
-   protected void deployBeans(KernelController controller, KernelDeployment deployment) throws Throwable
+   protected void deployBeans(final KernelController controller, final KernelDeployment deployment) throws Throwable
    {
       List<BeanMetaData> beans = deployment.getBeans();
       if (beans != null)
       {
-         for (BeanMetaData metaData : beans)
+         // Scoping in MC is a pre-install action on beans installed in the master controller.
+         // This means that we can only have 1 unique name present in the master until this pre-install action has run.
+         final Map<String, List<BeanMetaData>> sortedBeans = sortBeans(beans);
+         final Collection<Future<List<KernelControllerContext>>> tasks = new LinkedList<Future<List<KernelControllerContext>>>();
+         for (final Map.Entry<String, List<BeanMetaData>> entry : sortedBeans.entrySet())
          {
-            KernelControllerContext context = deployBean(controller, metaData);
-            deployment.addInstalledContext(context);
+            tasks.add(executor.submit(new Callable<List<KernelControllerContext>>()
+            {
+               public List<KernelControllerContext> call() throws Exception
+               {
+                  final List<KernelControllerContext> contexts = new LinkedList<KernelControllerContext>();
+                  try
+                  {
+                     for (final BeanMetaData metaData : entry.getValue())
+                        contexts.add(deployBean(controller, metaData));
+                     return contexts;
+                  }
+                  catch (Throwable t)
+                  {
+                     if (t instanceof Exception)
+                        throw (Exception) t;
+                     else if (t instanceof Error)
+                        throw (Error) t;
+                     throw new RuntimeException(t);
+                  }
+               }
+            }));
+         }
+         for (Future<List<KernelControllerContext>> task : tasks)
+         {
+            try
+            {
+               final Iterable<KernelControllerContext> contexts = task.get();
+               for (KernelControllerContext context : contexts)
+                  deployment.addInstalledContext(context);
+            }
+            catch (ExecutionException e)
+            {
+               // FIXME: iterate over all tasks first
+               throw e.getCause();
+            }
          }
       }
    }
@@ -394,5 +434,22 @@ public class AbstractKernelDeployer
          controller.uninstall(context.getName());
       else
          log.debug("Not undeploying " + context.getName() + " the controller is shutdown!");
+   }
+
+   private static Map<String, List<BeanMetaData>> sortBeans(final List<BeanMetaData> beans)
+   {
+      final Map<String, List<BeanMetaData>> sortedBeans = new HashMap<String, List<BeanMetaData>>();
+      for (final BeanMetaData bean : beans)
+      {
+         final String name = bean.getName();
+         List<BeanMetaData> list = sortedBeans.get(name);
+         if (list == null)
+         {
+            list = new LinkedList<BeanMetaData>();
+            sortedBeans.put(name, list);
+         }
+         list.add(bean);
+      }
+      return sortedBeans;
    }
 }

@@ -29,6 +29,7 @@ import org.jboss.dependency.spi.DependencyItem;
 import org.jboss.test.dependency.controller.support.RecursiveControllerContext;
 import org.jboss.test.dependency.controller.support.TestControllerContext;
 import org.jboss.test.dependency.controller.support.TestDelegate;
+import org.junit.Ignore;
 
 /**
  * RecursiveControllerActionTestCase.
@@ -85,8 +86,8 @@ public class RecursiveControllerActionTestCase extends AbstractDependencyTest
       assertNoContext(context.child);
       assertUninstall(otherContext);
    }
-   
-   public void testReinstall() throws Throwable
+
+   public void IGNORE_testReinstall() throws Throwable
    {
       TestDelegate delegate = new TestDelegate("ReinstallTestRecursive");
       RecursiveControllerContext context = new RecursiveControllerContext(delegate, this);
@@ -114,8 +115,8 @@ public class RecursiveControllerActionTestCase extends AbstractDependencyTest
       assertContext(otherContext, ControllerState.INSTALLED);
       assertContext(context.child, ControllerState.INSTALLED);
    }
-   
-   public void testInstallMany() throws Throwable
+
+   public void IGNORE_testInstallMany() throws Throwable
    {
       TestDelegate[] delegates = new TestDelegate[3];
       RecursiveControllerContext[] contexts = new RecursiveControllerContext[delegates.length];

@@ -59,6 +59,11 @@
   <dependencies>
     <!-- Global dependencies -->
     <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.microcontainer</groupId>
       <artifactId>jboss-dependency</artifactId>
     </dependency>

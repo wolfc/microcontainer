@@ -133,7 +133,7 @@ public class AbstractDependencyTest extends AbstractTestCaseWithSetup
 
    protected void assertContext(ControllerContext context, ControllerState expected) throws Throwable
    {
-      assertEquals(expected, context.getState());
+      assertEquals(context.toShortString(), expected, context.getState());
    }
 
    protected void assertNoContext(ControllerContext context) throws Throwable

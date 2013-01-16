@@ -57,6 +57,10 @@
       <artifactId>jboss-mdr</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.jboss.beach</groupId>
+      <artifactId>jboss-beach-executors</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-spi</artifactId>
     </dependency>

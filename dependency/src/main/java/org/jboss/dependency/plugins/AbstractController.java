@@ -21,21 +21,13 @@
 */
 package org.jboss.dependency.plugins;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.Executor;
+import java.lang.annotation.Annotation;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.jboss.beach.util.concurrent.MarkedExecutorService;
+import org.jboss.dependency.internal.TCCLExecutorService;
 import org.jboss.dependency.plugins.action.ControllerContextAction;
 import org.jboss.dependency.plugins.action.SimpleControllerContextAction;
 import org.jboss.dependency.spi.CallbackItem;
@@ -51,6 +43,11 @@ import org.jboss.dependency.spi.LifecycleCallbackItem;
 import org.jboss.dependency.spi.graph.GraphController;
 import org.jboss.dependency.spi.graph.LookupStrategy;
 import org.jboss.dependency.spi.graph.SearchInfo;
+import org.jboss.metadata.spi.MetaData;
+import org.jboss.metadata.spi.scope.Scope;
+import org.jboss.metadata.spi.scope.ScopeFactory;
+import org.jboss.metadata.spi.scope.ScopeFactoryLookup;
+import org.jboss.metadata.spi.scope.ScopeKey;
 import org.jboss.util.JBossObject;
 import org.jboss.util.collection.CollectionsFactory;
 
@@ -67,7 +64,9 @@ public class AbstractController extends JBossObject implements Controller, Contr
    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
    /** The executor */
-   private Executor executor;
+   //private ExecutorService executor = new MarkedExecutorService(Executors.newFixedThreadPool(4));
+   private ExecutorService executor = new TCCLExecutorService(new ThreadPoolExecutor(4, 4, 30, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy()));
+   //private ExecutorService executor = new DummyExecutorService();
 
    /** Whether we are shutdown */
    private boolean shutdown = false;
@@ -129,7 +128,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
    public void setExecutor(Executor executor)
    {
       // TODO - security
-      this.executor = executor;
+      throw new UnsupportedOperationException();
    }
 
    /**
@@ -140,7 +139,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
    public Executor getExecutor()
    {
       // TODO - security
-      return getExecutionEnvironment();
+      throw new UnsupportedOperationException();
    }
 
    /**
@@ -148,7 +147,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
     *
     * @return the executor
     */
-   protected Executor getExecutionEnvironment()
+   protected ExecutorService getExecutionEnvironment()
    {
       return executor;
    }
@@ -173,7 +172,9 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    public void checkShutdown()
    {
-      lockWrite();
+      final boolean needsLock = !lock.isWriteLockedByCurrentThread();
+      if (needsLock)
+         lockWrite();
       try
       {
          if (shutdown)
@@ -181,7 +182,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
       }
       finally
       {
-         unlockWrite();
+         if (needsLock)
+            unlockWrite();
       }
    }
 
@@ -799,7 +801,9 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    protected void change(ControllerContext context, ControllerState state, boolean trace) throws Throwable
    {
-      lockWrite();
+      boolean needsLock = !lock.isWriteLockedByCurrentThread();
+      if (needsLock)
+         lockWrite();
       try
       {
          checkShutdown();
@@ -835,7 +839,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
       }
       finally
       {
-         unlockWrite();
+         if (needsLock)
+            unlockWrite();
       }
    }
 
@@ -886,6 +891,18 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    protected boolean incrementState(ControllerContext context, boolean trace)
    {
+      //log.debug("**** incrementState(" + context.getName() + ")");
+      // should we be the one to increment state?
+      if(!tryLock(context))
+      {
+         log.warn("LOCK FAILED");
+         return false;
+      }
+      return incrementStateLocked(context, trace);
+   }
+
+   private boolean incrementStateLocked(ControllerContext context, boolean trace)
+   {
       ControllerState fromState = context.getState();
 
       Controller fromController = context.getController();
@@ -907,6 +924,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
          }
          finally
          {
+            if (error != null)
+               unlock(context);
             lockWrite();
             if (error != null)
             {
@@ -929,12 +948,16 @@ public class AbstractController extends JBossObject implements Controller, Contr
       }
 
       int toIndex = currentIndex + 1;
+      // if we obtained a lock, but the context is already beyond the end state
+      if (toIndex >= states.size())
+         return false;
       ControllerState toState = states.get(toIndex);
 
       unlockWrite();
       Throwable error = null;
       try
       {
+         //log.debug(context.getName() + ": " + context.getState() + " -> " + toState);
          install(context, fromState, toState);
 
          if (fromContexts != null)
@@ -953,6 +976,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
       }
       finally
       {
+         unlock(context);
          lockWrite();
          if (error != null)
          {
@@ -976,6 +1000,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    protected void resolveContexts(boolean trace)
    {
+      assert lock.isWriteLockedByCurrentThread();
       boolean resolutions = true;
       while (resolutions || onDemandEnabled)
       {
@@ -1014,14 +1039,15 @@ public class AbstractController extends JBossObject implements Controller, Contr
       // resolve child controllers
       for (AbstractController controller : childControllers)
       {
-         controller.lockWrite();
+         // do not lock the tree, but only that one controller
+         controller.lock.writeLock().lock();
          try
          {
             controller.resolveContexts(trace);
          }
          finally
          {
-            controller.unlockWrite();
+            controller.lock.writeLock().unlock();
          }
       }
    }
@@ -1036,8 +1062,9 @@ public class AbstractController extends JBossObject implements Controller, Contr
     * @param trace     whether trace is enabled
     * @return true when there were resolutions
     */
-   protected boolean resolveContexts(ControllerState fromState, ControllerState toState, boolean trace)
+   protected boolean resolveContexts(ControllerState fromState, ControllerState toState, final boolean trace)
    {
+      //log.debug("resolveContexts(" + fromState + "," + toState + ")");
       boolean resolutions = false;
       Set<ControllerContext> unresolved = contextsByState.get(fromState);
       Set<ControllerContext> resolved = resolveContexts(unresolved, fromState, toState, trace);
@@ -1058,6 +1085,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
                toProcess.add(context);
             }
          }
+         /*
          try
          {
             if (toProcess.isEmpty() == false)
@@ -1085,7 +1113,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
                            if (trace)
                               log.trace(name + " " + toState.getStateString());
                         }
-                        
+
                      }
                   }
                   finally
@@ -1103,6 +1131,92 @@ public class AbstractController extends JBossObject implements Controller, Contr
             {
                for (ControllerContext context : toProcess)
                   installing.remove(context);
+            }
+         }
+         */
+         if (toProcess.isEmpty() == false)
+         {
+            final Map<ControllerContext, Future<Boolean>> tasks = new HashMap<ControllerContext, Future<Boolean>>();
+            for (final ControllerContext context : toProcess)
+            {
+               Object name = context.getName();
+               if (fromState.equals(context.getState()) == false)
+               {
+                  if (trace)
+                     log.trace("Skipping already installed " + name + " for " + toState.getStateString());
+               }
+               else
+               {
+                  if (trace)
+                     log.trace("Dependencies resolved " + name + " for " + toState.getStateString());
+
+                  tasks.put(context, getExecutionEnvironment().submit(new Callable<Boolean>()
+                  {
+                     public Boolean call() throws Exception
+                     {
+                        // in case of a rejected execution, we might be running on the initiating thread which already has the lock
+                        final boolean needsLock = !lock.isWriteLockedByCurrentThread();
+                        if (needsLock)
+                           lockWrite();
+                        try
+                        {
+                           return incrementState(context, trace);
+                        }
+                        finally
+                        {
+                           if (needsLock)
+                              unlockWrite();
+                        }
+                     }
+
+                     public String toString()
+                     {
+                        return "Task increment " + context.toShortString();
+                     }
+                  }));
+               }
+            }
+            unlockWrite();
+            try {
+               assert !lock.isWriteLockedByCurrentThread();
+               for (final Map.Entry<ControllerContext, Future<Boolean>> task : tasks.entrySet())
+               {
+                  try
+                  {
+                     final Future<Boolean> future = task.getValue();
+                     if(future.get())
+                     {
+                        resolutions = true;
+                        //log.debug("***> " + task.getKey().toShortString());
+                        if (trace)
+                           log.trace(task + " " + toState.getStateString());
+                     }
+                  }
+                  catch (InterruptedException e)
+                  {
+                     // FIXME
+                     throw new RuntimeException(e);
+                  }
+                  catch (ExecutionException e)
+                  {
+                     log.warn("****** HANDLE THIS ERROR ******");
+                     Throwable t = e.getCause();
+                     if (t instanceof Error)
+                        throw (Error) t;
+                     else if (t instanceof RuntimeException)
+                        throw (RuntimeException) t;
+                     else
+                        throw new RuntimeException(t);
+                  }
+                  finally
+                  {
+                     installing.remove(task.getKey());
+                  }
+               }
+            }
+            finally
+            {
+               lockWrite();
             }
          }
       }
@@ -1420,7 +1534,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    protected Set<CallbackItem<?>> getCallbacks(Object name, boolean isInstallPhase)
    {
-      lockRead();
+      //lockRead();
       try
       {
          Map<Object, Set<CallbackItem<?>>> map = (isInstallPhase ? installCallbacks : uninstallCallbacks);
@@ -1429,7 +1543,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
       }
       finally
       {
-         unlockRead();
+         //unlockRead();
       }
    }
 
@@ -1709,6 +1823,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    protected void lockRead()
    {
+      if (parentController != null)
+         parentController.lockRead();
       lock.readLock().lock();
    }
 
@@ -1718,6 +1834,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
    protected void unlockRead()
    {
       lock.readLock().unlock();
+      if (parentController != null)
+         parentController.unlockRead();
    }
 
    /**
@@ -1725,6 +1843,9 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    protected void lockWrite()
    {
+      assert !lock.isWriteLockedByCurrentThread();
+      if (parentController != null)
+         parentController.lockWrite();
       lock.writeLock().lock();
    }
 
@@ -1734,6 +1855,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
    protected void unlockWrite()
    {
       lock.writeLock().unlock();
+      if (parentController != null)
+         parentController.unlockWrite();
    }
 
    /**
@@ -2055,5 +2178,15 @@ public class AbstractController extends JBossObject implements Controller, Contr
          return null;
       else
          return states.get(index);
+   }
+
+   protected static boolean tryLock(ControllerContext context)
+   {
+      return ((AbstractControllerContext) context).tryLockWrite();
+   }
+
+   protected static void unlock(ControllerContext context)
+   {
+      ((AbstractControllerContext) context).unlockWrite();
    }
 }
