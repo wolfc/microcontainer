@@ -432,6 +432,14 @@ public class AbstractControllerContext extends JBossObject implements Controller
    /**
     * Lock for write
     */
+   void lockWrite()
+   {
+      lock.writeLock().lock();
+   }
+
+   /**
+    * Try to lock for write
+    */
    boolean tryLockWrite()
    {
       return lock.writeLock().tryLock();

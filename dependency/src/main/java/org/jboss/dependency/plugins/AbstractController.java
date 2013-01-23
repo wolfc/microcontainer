@@ -65,7 +65,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
 
    /** The executor */
    //private ExecutorService executor = new MarkedExecutorService(Executors.newFixedThreadPool(4));
-   private ExecutorService executor = new TCCLExecutorService(new ThreadPoolExecutor(4, 4, 30, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy()));
+   private static final int NUM_THREADS = Math.max(Runtime.getRuntime().availableProcessors(), 2);
+   private ExecutorService executor = new TCCLExecutorService(new ThreadPoolExecutor(NUM_THREADS, NUM_THREADS, 30, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy()));
    //private ExecutorService executor = new DummyExecutorService();
 
    /** Whether we are shutdown */
@@ -172,9 +173,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    public void checkShutdown()
    {
-      final boolean needsLock = !lock.isWriteLockedByCurrentThread();
-      if (needsLock)
-         lockWrite();
+      final boolean locked = lockWriteIfNeeded();
       try
       {
          if (shutdown)
@@ -182,7 +181,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
       }
       finally
       {
-         if (needsLock)
+         if (locked)
             unlockWrite();
       }
    }
@@ -761,7 +760,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
                log.trace("Dependencies for " + name + ": " + dependsOn);
          }
 
-         boolean ok = incrementState(context, trace);
+         lock(context);
+         boolean ok = incrementStateLocked(context, trace);
          if (ok)
          {
             try
@@ -853,7 +853,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    protected void enableOnDemand(ControllerContext context, boolean trace) throws Throwable
    {
-      lockWrite();
+      final boolean locked = lockWriteIfNeeded();
       try
       {
          checkShutdown();
@@ -876,7 +876,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
       }
       finally
       {
-         unlockWrite();
+         if (locked)
+            unlockWrite();
       }
    }
 
@@ -896,7 +897,8 @@ public class AbstractController extends JBossObject implements Controller, Contr
       if(!tryLock(context))
       {
          log.warn("LOCK FAILED");
-         return false;
+         // return true, because the controller is in flux
+         return true;
       }
       return incrementStateLocked(context, trace);
    }
@@ -1757,6 +1759,7 @@ public class AbstractController extends JBossObject implements Controller, Contr
     */
    protected void install(ControllerContext context, ControllerState fromState, ControllerState toState) throws Throwable
    {
+      assert !lock.isWriteLockedByCurrentThread();
       long time = 0;
       boolean collectStats = this.collectStats;
       if (collectStats)
@@ -1847,6 +1850,19 @@ public class AbstractController extends JBossObject implements Controller, Contr
       if (parentController != null)
          parentController.lockWrite();
       lock.writeLock().lock();
+   }
+
+   /**
+    * Lock for write if not already obtained.
+    * unlockWrite must called only if true is returned.
+    * @return if the controller was actively locked
+    */
+   private boolean lockWriteIfNeeded()
+   {
+      if (lock.isWriteLockedByCurrentThread())
+         return false;
+      lockWrite();
+      return true;
    }
 
    /**
@@ -2178,6 +2194,11 @@ public class AbstractController extends JBossObject implements Controller, Contr
          return null;
       else
          return states.get(index);
+   }
+
+   protected static void lock(ControllerContext context)
+   {
+      ((AbstractControllerContext) context).lockWrite();
    }
 
    protected static boolean tryLock(ControllerContext context)
